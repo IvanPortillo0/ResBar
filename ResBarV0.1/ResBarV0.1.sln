@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResBarV0.1", "ResBarV0.1\ResBarV0.1.csproj", "{DA4D198D-C4C1-4E67-896E-EE91AE292534}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA4D198D-C4C1-4E67-896E-EE91AE292534}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA4D198D-C4C1-4E67-896E-EE91AE292534}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA4D198D-C4C1-4E67-896E-EE91AE292534}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA4D198D-C4C1-4E67-896E-EE91AE292534}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AC12734D-7A68-4A17-BF55-833091E420F0}
+	EndGlobalSection
+EndGlobal

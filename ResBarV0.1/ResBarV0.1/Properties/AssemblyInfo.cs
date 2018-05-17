@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // La información general de un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos valores de atributo para modificar la información
 // asociada con un ensamblado.
-[assembly: AssemblyTitle("ResBar")]
+[assembly: AssemblyTitle("ResBarV0.1")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ResBar")]
+[assembly: AssemblyProduct("ResBarV0.1")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // El siguiente GUID sirve como id. de typelib si este proyecto se expone a COM.
-[assembly: Guid("b99f6fc2-68cd-4bd2-b138-ebb27e1eb0b5")]
+[assembly: Guid("da4d198d-c4c1-4e67-896e-ee91ae292534")]
 
 // La información de versión de un ensamblado consta de los cuatro valores siguientes:
 //
