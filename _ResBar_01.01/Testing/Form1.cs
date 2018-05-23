@@ -23,10 +23,12 @@ namespace Testing
             try
             {
                 List<Categoria> categorias = new List<Categoria>();
+                List<producto> prod = new List<producto>();
 
-                categorias = ManejadorCategorias.Obtener(true);
-
-                dataGridView1.DataSource = categorias;
+                prod = ManejadorProductos.Buscar("po",2);
+                //prod = ManejadorCategorias.Obtener(false);
+                
+                dataGridView1.DataSource = prod;
             }
             catch (Exception ex)
             {

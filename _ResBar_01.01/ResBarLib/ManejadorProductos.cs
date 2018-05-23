@@ -21,7 +21,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM producto WHERE idProducto=" + idCategoria + ";";
+                    string query = "SELECT * FROM producto WHERE idCategoria=" + idCategoria + ";";
                     var Respuesta = db.Query<producto>(query).ToList();
                     return Respuesta;
                 }
@@ -41,7 +41,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM producto WHERE idProducto=" + idCategoria + " AND nombre REGEXP '^[" + nombreProd + "]';";
+                    string query = "SELECT * FROM producto WHERE idCategoria=" + idCategoria + " AND nombre REGEXP '^[" + nombreProd + "]';";
                     var respuesta = db.Query<producto>(query).ToList();
                     return respuesta;
                 }

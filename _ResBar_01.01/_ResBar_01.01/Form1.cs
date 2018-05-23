@@ -59,9 +59,10 @@ namespace _ResBar_01._01
 
         private void btnPrueba_Click(object sender, EventArgs e)
         {
-
-            //var Query = ManejadorProductos.Obtener(1);
-           
+            //abre el form para probar consultas
+            Testing.Form1 test = new Testing.Form1();
+            test.MdiParent = Form1.ActiveForm;
+            test.Show();
         }
     }
 }
