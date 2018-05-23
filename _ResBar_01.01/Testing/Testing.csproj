@@ -78,5 +78,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResBarLib\ResBarLib.csproj">
+      <Project>{529c881f-9f4d-40e6-b675-bbc829eafe78}</Project>
+      <Name>ResBarLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

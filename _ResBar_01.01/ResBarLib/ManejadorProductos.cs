@@ -11,7 +11,7 @@ using MySql.Data.MySqlClient;
 
 namespace ResBarLib
 {
-    class ManejadorProductos
+    public static class ManejadorProductos
     {
         public static List<producto> ObtenerxCategoria(int idCategoria)
         {

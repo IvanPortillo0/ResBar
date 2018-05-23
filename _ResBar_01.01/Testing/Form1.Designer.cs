@@ -41,6 +41,7 @@
             this.btn_Consulta.TabIndex = 0;
             this.btn_Consulta.Text = "Consulta";
             this.btn_Consulta.UseVisualStyleBackColor = true;
+            this.btn_Consulta.Click += new System.EventHandler(this.btn_Consulta_Click);
             // 
             // dataGridView1
             // 
@@ -58,7 +59,7 @@
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btn_Consulta);
             this.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();

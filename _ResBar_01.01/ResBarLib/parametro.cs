@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ResBarLib
 {
-    class parametro
+   public  class parametro
     {
         public parametro()
         {
