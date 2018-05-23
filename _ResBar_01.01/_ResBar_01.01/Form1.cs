@@ -60,11 +60,8 @@ namespace _ResBar_01._01
         private void btnPrueba_Click(object sender, EventArgs e)
         {
 
-            var Query = ManejadorProductos.ObtenerID();
-
-
-            //Console.WriteLine(Query);
-            //Console.ReadLine();
+            //var Query = ManejadorProductos.Obtener(1);
+           
         }
     }
 }

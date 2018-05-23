@@ -104,8 +104,6 @@ namespace _ResBar_01
                 string query = "SELECT MAX(idProducto) FROM producto;";
                 var id = db.Query<int>(query).SingleOrDefault();
                 id = id + 1;
-
-                MessageBox.Show("" + id);
                 return id;
             }
         }
