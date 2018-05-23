@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ResBarLib
 {
-    class Categoria
+  public  class Categoria
     {
         //Esta clase se Mapeara con el ORM Dapper.-
         public Categoria()

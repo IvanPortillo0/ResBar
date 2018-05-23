@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ResBarLib
 {
-    class producto
+  public  class producto
     {
         //Esta clase se Mapeara con el ORM Dapper.-
         public producto()

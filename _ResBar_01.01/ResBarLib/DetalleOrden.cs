@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ResBarLib
 {
-    class DetalleOrden
+   public class DetalleOrden
     {
         //Esta clase se Mapeara con el ORM Dapper.-
         public DetalleOrden()

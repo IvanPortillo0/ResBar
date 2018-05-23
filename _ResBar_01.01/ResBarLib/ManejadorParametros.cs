@@ -11,7 +11,7 @@ using MySql.Data.MySqlClient;
 
 namespace ResBarLib
 {
-    class ManejadorParametros
+    public static class ManejadorParametros
     {
         public static List<parametro> Obtener()
         {

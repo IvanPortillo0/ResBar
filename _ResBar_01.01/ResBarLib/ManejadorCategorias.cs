@@ -9,9 +9,9 @@ using MySql.Data.MySqlClient;
 
 namespace ResBarLib
 {
-    class ManejadorCategorias
+    public static class ManejadorCategorias
     {
-        public static List<producto> Obtener(Boolean ConSinProducto)
+        public static List<Categoria> Obtener(Boolean ConSinProducto)
         {
             try
             {
@@ -23,20 +23,22 @@ namespace ResBarLib
                     string query;
                     if (ConSinProducto)
                     {
-                        query = "SELECT * FROM producto;";
+                        query = "SELECT * FROM categoria;";
+                        var resp = db.Query<Categoria>(query).ToList();
+                        return resp;
                     }
                     else
                     {
                         query = "SELECT idCategoria FROM categoria;";
+                        var respuesta2 = db.Query<Categoria>(query).ToList();
+                        return respuesta2;
                     }
-                    var respuesta = db.Query<producto>(query).ToList();
-                    return respuesta;
                 }
 
             }
             catch (ErrorAplicationException ex)
             {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
+                throw new ErrorAplicationException("Obtener()$ No es posible conectarse a la DB", ex.InnerException);
             }
         }
 
