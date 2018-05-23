@@ -24,10 +24,10 @@ namespace Testing
             {
                 List<Categoria> categorias = new List<Categoria>();
                 List<producto> prod = new List<producto>();
-
+                
+                //prod = ManejadorProductos.ObtenerxCategoria(1);
                 prod = ManejadorProductos.Buscar("po",2);
                 //prod = ManejadorCategorias.Obtener(false);
-                
                 dataGridView1.DataSource = prod;
             }
             catch (Exception ex)
@@ -35,6 +35,18 @@ namespace Testing
                 MessageBox.Show(ex.Message);
             }
        
+        }
+
+        private void btnInsertar_Click(object sender, EventArgs e)
+        {
+            producto p2 = new producto();
+            p2.idProducto = 11;
+            p2.nombre = "prueba";
+            p2.precio = 10.00;
+            p2.categoria.idCategoria = 2;
+            p2.area = 'c';
+            var R = ManejadorProductos.Insertar(p2);
+            MessageBox.Show("" + R);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES('" + prod.idProducto + "', '" + prod.nombre + "', '" + prod.precio + "', '" + prod.categoria + "', '" + prod.area + "');";
+                    string query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES('" + prod.idProducto + "', '" + prod.nombre + "', '" + prod.precio + "', '" + prod.categoria.idCategoria + "', '" + prod.area + "');";
                     var respuesta = db.Execute(query, prod);
                     return respuesta;
                 }
@@ -81,7 +81,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "UPDATE producto SET nombre='" + prod.nombre + "', precio='" + prod.precio + "', idCategoria='" + prod.categoria + "', area='" + prod.area + "' WHERE idProducto= '" + prod.idProducto + "';";
+                    string query = "UPDATE producto SET nombre='" + prod.nombre + "', precio='" + prod.precio + "', idCategoria='" + prod.categoria.idCategoria + "', area='" + prod.area + "' WHERE idProducto= '" + prod.idProducto + "';";
                     var respuesta = db.Execute(query, prod);
                     return respuesta;
                 }

@@ -23,15 +23,15 @@ namespace ResBarLib
                     string query;
                     if (ConSinProducto)
                     {
-                        query = "SELECT * FROM categoria;";
+                        query = "SELECT * FROM producto;";//no estoy seguro de esta por el tipo del metodo
                         var resp = db.Query<Categoria>(query).ToList();
                         return resp;
                     }
                     else
                     {
-                        query = "SELECT idCategoria FROM categoria;";
-                        var respuesta2 = db.Query<Categoria>(query).ToList();
-                        return respuesta2;
+                        query = "SELECT * FROM categoria;";
+                        var resp = db.Query<Categoria>(query).ToList();
+                        return resp;
                     }
                 }
 
