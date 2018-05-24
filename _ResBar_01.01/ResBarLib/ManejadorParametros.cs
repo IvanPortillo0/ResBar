@@ -17,7 +17,7 @@ namespace ResBarLib
         {
             try
             {
-                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
