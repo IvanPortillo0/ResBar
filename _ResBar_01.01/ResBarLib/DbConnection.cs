@@ -18,7 +18,8 @@ namespace ResBarLib
        
        public static string Cadena()
         {
-            string CadenaConexion = "server=127.0.0.1; database=resbar; Uid=resbar; pwd=Restaurante2018;";
+             string CadenaConexion = "server=127.0.0.1; database=resbar; Uid=resbar; pwd=Restaurante2018;";
+            //string CadenaConexion = "server=127.0.0.1; database=resbar; Uid=root; pwd=12345678;"; // Victoria Prueba
             return CadenaConexion;
         }
     }

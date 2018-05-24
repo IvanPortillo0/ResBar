@@ -12,12 +12,15 @@ namespace ResBarLib
 {
     public static class ManejadorOrdenes
     {
-        //Obtienen todas las Ordenes "Activas"=True.-
+        //Obtienen todas las Ordenes "Activas"=True.- PROBADO VICTORIA FUNCIONA.
+
+            /* Este metodo va a la BD y delvuelve el objeto orden si el parametro Activas = True */
+        
         public static List<Orden> OrdenesActivas()
         {
             try
             {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
@@ -32,11 +35,12 @@ namespace ResBarLib
             }
         }
 
+
         public static int Actualizar(Orden orden)
         {
             try
             {
-                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
@@ -56,7 +60,7 @@ namespace ResBarLib
         {
             try
             {
-                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
@@ -75,7 +79,7 @@ namespace ResBarLib
         {
             try
             {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
@@ -113,7 +117,7 @@ namespace ResBarLib
         {
             try
             {
-                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
@@ -133,7 +137,7 @@ namespace ResBarLib
         {
             try
             {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
@@ -151,7 +155,7 @@ namespace ResBarLib
         {
             try
             {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();

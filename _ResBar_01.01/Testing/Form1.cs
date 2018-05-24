@@ -24,7 +24,7 @@ namespace Testing
                // List<Categoria> categorias = new List<Categoria>();
                 List<producto> prod = new List<producto>();
                 
-                prod = ManejadorProductos.ObtenerxCategoria(1);
+               // prod = ManejadorProductos.ObtenerxCategoria(1);
                 //prod = ManejadorProductos.Buscar("po",2);
                 //prod = ManejadorCategorias.Obtener(false);
                 dataGridView1.DataSource = prod;
@@ -111,6 +111,11 @@ namespace Testing
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
