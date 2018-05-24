@@ -10,14 +10,17 @@ using System;
 
 namespace ResBarLib
 {
+    //Clase encargada de los servicios para las órdenes, los métodos de esta clase también serán STATIC
+
     public static class ManejadorOrdenes
     {
-        //Obtienen todas las Ordenes "Activas"=True.-
+        //va a la base de datos y filtra todas las ordenes cuyo campo Activa=TRUE, y devuelve un colección de objetos Orden
+
         public static List<Orden> OrdenesActivas()
         {
             try
             {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
@@ -26,13 +29,15 @@ namespace ResBarLib
                     return Respuesta;
                 }
             }
-            catch (ErrorAplicationException ex)
+            catch 
             {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
+                 throw new ErrorAplicationException("ManejadorOrdenes.ObtenerActivas()$ No es posible conectarse a la DB");
             }
         }
 
-        public static int Actualizar(Orden orden)
+        //Recibe un entero que indica el ID de la orden y luego devuelve el objeto orden completo que corresponde
+
+        public static List<Orden> Obtener(int idOrden)
         {
             try
             {
@@ -40,9 +45,35 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "UPDATE orden SET mesero='" + orden.mesero + "', mesa='" + orden.mesa + "', cliente='" + orden.cliente + "', fecha='" + orden.fecha + "', comentario='" + orden.comentario + "', total='" + orden.total + "', estado='" + orden.activa + "' WHERE idOrden= '" + orden.idOrden + "';";
-                    var respuesta = db.Execute(query, orden);
-                    return respuesta;
+                    string query = "SELECT * FROM orden WHERE idOrden='" + idOrden +"';";
+                    var Respuesta = db.Query<Orden>(query).ToList();
+                    return Respuesta;
+                }
+            }
+            catch 
+            {
+                 throw new ErrorAplicationException("ManejadorOrdenes.Obtener()$ No es posible conectarse a la DB");
+            }
+        }
+
+        //Toma un objeto orden que ya existe en la tabla Orden de la base de datos, luego verifica que el objeto 
+        //orden tenga productos, que su total sea mayor que cero, en la base de datos hace update de la tabla orden, y para 
+        //la tabla Detalle Orden, lo que se hace es que se eliminan las tuplas de dicha orden y luego se insertan de nuevo
+
+        public static int Actualizar(Orden orden)
+        {
+            try
+            {
+                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                {
+
+                    if (db.State == ConnectionState.Closed)
+                        db.Open();
+                        string query = "UPDATE orden SET mesero='" + orden.mesero + "', mesa='" + orden.mesa + "', cliente='" + orden.cliente + "', fecha='" + orden.fecha + "', comentario='" + orden.comentario + "', total='" + orden.total + "', estado='" + orden.activa + "' WHERE idOrden= '" + orden.idOrden + "';";
+                        var respuesta = db.Execute(query, orden);
+                        return respuesta;
+                        
+                    
                 }
             }
             catch (ErrorAplicationException ex)
@@ -51,7 +82,31 @@ namespace ResBarLib
             }
         }
 
-        //Inserta una orden 
+        //Obtiene todas las ordenes que contenga el "criterio buscado".- (mesa, mesero o cliente)
+
+        public static List<Orden> BuscarActivas(string criterio)
+        {
+            try
+            {
+                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                {
+                    if (db.State == ConnectionState.Closed)
+                        db.Open();
+                    string query = "select * from orden where (mesero like '%@criterio%') or (mesa like '%@criterio%') or (cliente like '%@criterio%') ";
+                    var Respuesta = db.Query<Orden>(query).ToList();
+                    return Respuesta;
+                }
+            }
+            catch
+            {
+                throw new ErrorAplicationException("ManejadorOrdenes.BuscarActivas()$ No es posible conectarse a la DB");
+            }
+        }
+
+        //Inserta el objeto orden en la base de datos, inserta una tupla en la tabla Orden y una o varias tuplas en la tabla 
+        //Detalle Orden, además verifica que la orden tenga al menos uno de los campos con valor: mesero, mesa o cliente, no 
+        //permite insertar ordenes con un total de cero o negativo, o que NO posean ningún producto en su detalle
+
         public static int Insertar(Orden orden)
         {
             try
@@ -70,47 +125,40 @@ namespace ResBarLib
                 throw new ErrorAplicationException(ex.Message, ex.InnerException);
             }
         }
-        //Obtiene todas las ordenes que contenga el "criterio buscado".- (mesa, mesero o cliente)
-        public static List<Orden> BuscarActivas(string criterio)
-        {
-            try
-            {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
-                {
-                    if (db.State == ConnectionState.Closed)
-                        db.Open();
-                    string query = "select * from orden where (mesero like '%@criterio%') or (mesa like '%@criterio%') or (cliente like '%@criterio%') ";
-                    var Respuesta = db.Query<Orden>(query).ToList();
-                    return Respuesta;
-                }
-            }
-            catch (ErrorAplicationException ex)
-            {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
-            }
-        }
+        
+        //Elimina dicha orden de la base de datos, eliminando sus detalles también
 
         public static int Eliminar(Orden orden)
         {
+            int respuesta = 0;
             try
             {
                 using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "DELETE FROM orden WHERE idOrden='" + orden.idOrden + "';";
+                    string query = "DELETE a1, a2 FROM detalleorden AS a1 INNER JOIN orden AS a2 WHERE a1.idOrden = a2.idOrden AND a1.idOrden LIKE '" + orden.idOrden + "';";
                     var respuesta = db.Execute(query, orden);
-                    return respuesta;
                 }
+            
+            if (respuesta < 0)
+                {
+                    throw new ErrorAplicationException("ManejadorOrdenes.Eliminar()$No se puede realizar la operación de Eliminar");
+                }
+                else { return respuesta; }
+
             }
-            catch (ErrorAplicationException ex)
+            catch
             {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
+                throw new ErrorAplicationException("ManejadorOrdenes.Eliminar()$Problemas al conectar en la DB");
             }
         }
 
+        //Va a la base de datos y obtiene el ultimo Id de orden y le suma 1
+
         public static int ObtenerID()
         {
+            int respuesta = 0;
             try
             {
                 using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
@@ -121,50 +169,64 @@ namespace ResBarLib
                     var id = db.Query<int>(query).SingleOrDefault();
                     id = id + 1;
                     return id;
+                }            
+                    if (respuesta < 0)
+                {
+                    throw new ErrorAplicationException("ManejadorOrdenes.ObtenerID()$No se puede realizar la operación de Obtener el Id");
                 }
+                else { return respuesta; }
+
             }
-            catch (ErrorAplicationException ex)
+            catch
             {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
+                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerID()$Problemas al conectar en la DB");
             }
-        }
+            }
+
+
+        //Obtiene todas las ventas realizadas para una fecha determinada, se filtra solo por día mes y año, 
+        //las ordenes devueltas tienen que tener el campo activa en FALSE, pues son ordenes que ya fueron cobradas
 
         public static List<Orden> ObtenerVentas(DateTime fecha)
+                 
         {
             try
             {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM orden WHERE fecha= " + fecha + " AND activa=false;";
+                    string query = "SELECT * FROM orden WHERE fecha= " + fecha + " AND estado=false;";
                     var Respuesta = db.Query<Orden>(query).ToList();
                     return Respuesta;
                 }
             }
-            catch (ErrorAplicationException ex)
+            catch 
             {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
+                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerVentas()$ No es posible conectarse a la DB");
             }
         }
+
+        //filtrando por un rango de fechas. Importante en este método es que los objetos Orden NO tienen 
+        //cargado el detalle de sus productos.
+
         public static List<Orden> ObtenerVentas(DateTime fechaMayor, DateTime fechaMenor)
         {
             try
             {
-                using (IDbConnection db = new SqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
+                using (IDbConnection db = new MySqlConnection(ConfigurationManager.ConnectionStrings["cn"].ConnectionString))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-
-                    String query = "SELECT * FROM orden WHERE fecha >=" + fechaMenor + " AND fecha<= " + fechaMayor + "AND active=false";
+                    String query = "SELECT * FROM orden WHERE fecha >=" + fechaMenor + " AND fecha<= " + fechaMayor + "AND estado=false";
                     var Respuesta = db.Query<Orden>(query).ToList();
                     return Respuesta;
                 }
             }
-            catch (ErrorAplicationException ex)
+            catch 
             {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
-            }
+                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerVentas()$ No es posible conectarse a la DB");
+                }
+    }
         }
     }
-}
