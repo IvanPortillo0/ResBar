@@ -15,11 +15,13 @@ namespace Testing
     {
         public Form1()
         {
+
             InitializeComponent();
         }
 
         private void btn_Consulta_Click(object sender, EventArgs e)
         {
+            // Prueba de la clase ManejadorCategorias
             try
             {
                 List<Categoria> categorias = new List<Categoria>();
@@ -39,14 +41,29 @@ namespace Testing
 
         private void btnInsertar_Click(object sender, EventArgs e)
         {
-            producto p2 = new producto();
-            p2.idProducto = 11;
-            p2.nombre = "prueba";
-            p2.precio = 10.00;
-            p2.categoria.idCategoria = 2;
-            p2.area = 'c';
-            var R = ManejadorProductos.Insertar(p2);
-            MessageBox.Show("" + R);
+            // Prueba de la clase ManejadorProductos
+            try
+            {
+                producto p2 = new producto();
+                p2.idProducto = 11;
+                p2.nombre = "prueba";
+                p2.precio = 10.00;
+                p2.categoria.idCategoria = 2;
+                p2.area = 'c';
+                var R = ManejadorProductos.Insertar(p2);
+                MessageBox.Show("" + R);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+           
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
