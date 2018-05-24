@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using MySql.Data;
 using MySql.Data.MySqlClient;
@@ -19,7 +20,8 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM producto WHERE idCategoria=" + idCategoria + ";";
+                    
+                    string query = "SELECT a.idProducto, a.nombre, a.precio, b.idCategoria, a.area FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =" + idCategoria + " ORDER BY idProducto;";
                     var Respuesta = db.Query<producto>(query).ToList();
                     return Respuesta;
                 }

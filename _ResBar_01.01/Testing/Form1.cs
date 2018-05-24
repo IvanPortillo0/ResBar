@@ -20,14 +20,10 @@ namespace Testing
 
         private void btn_Consulta_Click(object sender, EventArgs e)
         {
-            
-               // List<Categoria> categorias = new List<Categoria>();
-                List<producto> prod = new List<producto>();
-                
-                prod = ManejadorProductos.ObtenerxCategoria(1);
-                //prod = ManejadorProductos.Buscar("po",2);
-                //prod = ManejadorCategorias.Obtener(false);
-                dataGridView1.DataSource = prod;
+
+            List<producto> prod = new List<producto>();
+            prod = ManejadorProductos.ObtenerxCategoria(1);
+            dataGridView1.DataSource = prod;
             
         }
 
