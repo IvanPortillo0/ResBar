@@ -27,9 +27,9 @@ namespace ResBarLib
                 }
 
             }
-            catch (ErrorAplicationException ex)
+            catch
             {
-                throw new ErrorAplicationException(ex.Message, ex.InnerException);
+                throw new ErrorAplicationException("ManejadorProductos.ObtenerxCategoria()$ No es posible conectarse a la DB");
             }
         }
 

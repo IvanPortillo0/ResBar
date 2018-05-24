@@ -20,21 +20,15 @@ namespace Testing
 
         private void btn_Consulta_Click(object sender, EventArgs e)
         {
-            try
-            {
-                List<Categoria> categorias = new List<Categoria>();
+            
+               // List<Categoria> categorias = new List<Categoria>();
                 List<producto> prod = new List<producto>();
                 
-                //prod = ManejadorProductos.ObtenerxCategoria(1);
-                prod = ManejadorProductos.Buscar("po",2);
+                prod = ManejadorProductos.ObtenerxCategoria(1);
+                //prod = ManejadorProductos.Buscar("po",2);
                 //prod = ManejadorCategorias.Obtener(false);
                 dataGridView1.DataSource = prod;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-       
+            
         }
 
         private void btnInsertar_Click(object sender, EventArgs e)
@@ -45,8 +39,78 @@ namespace Testing
             p2.precio = 10.00;
             p2.categoria.idCategoria = 2;
             p2.area = 'c';
-            var R = ManejadorProductos.Insertar(p2);
-            MessageBox.Show("" + R);
+
+            try
+            {
+                if (ManejadorProductos.Insertar(p2) > 0)
+                {
+                    MessageBox.Show("Registro Insertado");
+                }
+                else
+                {
+                    MessageBox.Show("No se inserto");
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void btnActualizar_Click(object sender, EventArgs e)
+        {
+            producto p2 = new producto();
+            p2.idProducto = 11;
+            p2.nombre = "pruebaActualizar";
+            p2.precio = 15.00;
+            p2.categoria.idCategoria = 2;
+            p2.area = 'c';
+
+            try
+            {
+                if (ManejadorProductos.Actualizar(p2) > 0)
+                {
+                    MessageBox.Show("Registro Actualizado");
+                }
+                else
+                {
+                    MessageBox.Show("No se Actualizo");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            producto p2 = new producto();
+            p2.idProducto = 11;
+            p2.nombre = "pruebaActualizar";
+            p2.precio = 15.00;
+            p2.categoria.idCategoria = 2;
+            p2.area = 'c';
+
+            try
+            {
+                if (ManejadorProductos.Eliminar(p2) > 0)
+                {
+                    MessageBox.Show("Registro Eliminado");
+                }
+                else
+                {
+                    MessageBox.Show("No se Elimino");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

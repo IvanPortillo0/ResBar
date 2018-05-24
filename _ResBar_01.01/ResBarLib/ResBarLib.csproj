@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Categoria.cs" />
+    <Compile Include="DbConnection.cs" />
     <Compile Include="DetalleOrden.cs" />
     <Compile Include="ErrorAplicationException.cs" />
     <Compile Include="ManejadorCategorias.cs" />
@@ -58,7 +59,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App2.config">
+    <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
