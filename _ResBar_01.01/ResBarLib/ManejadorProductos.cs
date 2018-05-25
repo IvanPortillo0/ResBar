@@ -22,8 +22,8 @@ namespace ResBarLib
                         db.Open();
                     
                     string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =" + idCategoria + " ORDER BY idProducto;";
-                    //var Respuesta = db.Query<producto>(query).ToList();
                     var Respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
+                        //sirve para que el funcione la variable Categorias de la tabla producto
                         prod.categoria = cat;
                         return prod;
                     }, splitOn: "idCategoria").Distinct().ToList();

@@ -37,16 +37,20 @@ namespace Testing
 
         private void btnInsertar_Click(object sender, EventArgs e)
         {
-            producto p2 = new producto();
-            p2.idProducto = 11;
-            p2.nombre = "prueba";
-            p2.precio = 10.00;
-            p2.categoria.idCategoria = 2;
-            p2.area = 'c';
+            Categoria cat = new Categoria();
+            try
+            {
+                cat.idCategoria = Convert.ToInt32(txtTexto.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            cat.nombre = "categoria";
 
             try
             {
-                if (ManejadorProductos.Insertar(p2) > 0)
+                if (ManejadorCategorias.Insertar(cat) > 0)
                 {
                     MessageBox.Show("Registro Insertado");
                 }
@@ -92,22 +96,26 @@ namespace Testing
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            producto p2 = new producto();
-            p2.idProducto = 11;
-            p2.nombre = "pruebaActualizar";
-            p2.precio = 15.00;
-            p2.categoria.idCategoria = 2;
-            p2.area = 'c';
-
+            Categoria cat = new Categoria();
             try
             {
-                if (ManejadorProductos.Eliminar(p2) > 0)
+                cat.idCategoria = Convert.ToInt32(txtTexto.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            cat.nombre = "categoria";
+               
+            try
+            {
+                if (ManejadorCategorias.Eliminar(cat) > 0)
                 {
                     MessageBox.Show("Registro Eliminado");
                 }
                 else
                 {
-                    MessageBox.Show("No se Elimino");
+                    MessageBox.Show("No se Elimino");// se podria quitar ya que muestra mensajes personalizados para cada caso cuando no se hace la eliminación
                 }
 
             }

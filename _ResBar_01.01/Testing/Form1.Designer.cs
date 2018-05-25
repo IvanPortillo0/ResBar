@@ -33,6 +33,7 @@
             this.btnInsertar = new System.Windows.Forms.Button();
             this.btnActualizar = new System.Windows.Forms.Button();
             this.btnEliminar = new System.Windows.Forms.Button();
+            this.txtTexto = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -84,11 +85,20 @@
             this.btnEliminar.UseVisualStyleBackColor = true;
             this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
             // 
+            // txtTexto
+            // 
+            this.txtTexto.Location = new System.Drawing.Point(293, 99);
+            this.txtTexto.Name = "txtTexto";
+            this.txtTexto.Size = new System.Drawing.Size(100, 27);
+            this.txtTexto.TabIndex = 5;
+            this.txtTexto.Text = "3";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(899, 595);
+            this.Controls.Add(this.txtTexto);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.btnActualizar);
             this.Controls.Add(this.btnInsertar);
@@ -100,6 +110,7 @@
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -110,6 +121,7 @@
         private System.Windows.Forms.Button btnInsertar;
         private System.Windows.Forms.Button btnActualizar;
         private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.TextBox txtTexto;
     }
 }
 

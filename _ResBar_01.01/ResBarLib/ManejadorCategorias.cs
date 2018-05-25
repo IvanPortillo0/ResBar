@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Dapper;
 using MySql.Data;
 using MySql.Data.MySqlClient;
@@ -53,7 +54,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-
+                    
                     string query = "INSERT INTO categoria (idCategoria, nombre) VALUES('" + categoria.idCategoria + "', '" + categoria.nombre + "');";
                     respuesta = db.Execute(query, categoria);
                     
@@ -106,14 +107,38 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "DELETE FROM categoria WHERE idCategoria='" + categoria.idCategoria + "';";
+                    //asi estaba
+                    /*string query = "DELETE FROM categoria WHERE idCategoria='" + categoria.idCategoria + "';";
                     respuesta = db.Execute(query, categoria);
                 }
 
                 if (respuesta < 0)
                 {
                     throw new ErrorAplicationException("ManejadorCategorias.Eliminar()$No se puede realizar la operacion de Eliminar."); }
-                else { return respuesta; }
+                else { return respuesta; }*/
+                    //empieza modificacion
+                    string query;
+
+                    //Sirve para comprobar si hay registros en la tabla productos que esten relacionados con el registro de categoria que se desea borrar
+                    query = "SELECT COUNT(*) from producto where idCategoria=" + categoria.idCategoria + ";";
+                    respuesta = db.Query<int>(query).SingleOrDefault();
+                    
+
+                    if (respuesta==0)
+                    {
+                        query = "DELETE FROM categoria WHERE idCategoria='" + categoria.idCategoria + "';";
+                        respuesta = db.Execute(query, categoria);
+
+                        if (respuesta == 0) { MessageBox.Show("No Existe registro de id=" + categoria.idCategoria); respuesta = -1; }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la bd");
+                        respuesta = -1;
+                    }
+                    return respuesta;
+                }
+                //termina modificación
             }
             catch
             {
