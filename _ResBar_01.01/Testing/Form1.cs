@@ -20,11 +20,19 @@ namespace Testing
 
         private void btn_Consulta_Click(object sender, EventArgs e)
         {
-
+            /*
             List<producto> prod = new List<producto>();
             prod = ManejadorProductos.ObtenerxCategoria(1);
             dataGridView1.DataSource = prod;
-            
+            */
+
+            List<producto> prod = new List<producto>();
+            prod = ManejadorProductos.ObtenerxCategoria(1);
+
+            for (int i = 0; i < prod.Count(); i++)
+            {
+                MessageBox.Show(prod.ElementAt(i).nombre + "   " + prod.ElementAt(i).categoria.idCategoria);
+            }
         }
 
         private void btnInsertar_Click(object sender, EventArgs e)

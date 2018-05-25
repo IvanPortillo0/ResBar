@@ -21,8 +21,13 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open();
                     
-                    string query = "SELECT a.idProducto, a.nombre, a.precio, b.idCategoria, a.area FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =" + idCategoria + " ORDER BY idProducto;";
-                    var Respuesta = db.Query<producto>(query).ToList();
+                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =" + idCategoria + " ORDER BY idProducto;";
+                    //var Respuesta = db.Query<producto>(query).ToList();
+                    var Respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
+                        prod.categoria = cat;
+                        return prod;
+                    }, splitOn: "idCategoria").Distinct().ToList();
+
                     return Respuesta;
                 }
             }
@@ -34,7 +39,7 @@ namespace ResBarLib
         }
 
         //Buscara en la base de datos todos los productos cuyo Id o nombre coincida con el criterio de búsqueda, luego devuelve la colección de productos, sin devolver productos duplicados
-        public static List<producto> Buscar(string nombreProd, int idCategoria)
+        public static List<producto> Buscar(string nombreProd)
         {
             try
             {
@@ -42,7 +47,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM producto WHERE idCategoria=" + idCategoria + " AND nombre REGEXP '^[" + nombreProd + "]';";
+                    string query = "SELECT * FROM producto WHERE nombre REGEXP '^[" + nombreProd + "]';";
                     var respuesta = db.Query<producto>(query).ToList();
                     return respuesta;
                 }
