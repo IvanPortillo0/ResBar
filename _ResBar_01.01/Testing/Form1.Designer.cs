@@ -34,6 +34,7 @@
             this.btnActualizar = new System.Windows.Forms.Button();
             this.btnEliminar = new System.Windows.Forms.Button();
             this.txtTexto = new System.Windows.Forms.TextBox();
+            this.btnboolean = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -93,11 +94,22 @@
             this.txtTexto.TabIndex = 5;
             this.txtTexto.Text = "3";
             // 
+            // btnboolean
+            // 
+            this.btnboolean.Location = new System.Drawing.Point(635, 25);
+            this.btnboolean.Name = "btnboolean";
+            this.btnboolean.Size = new System.Drawing.Size(108, 50);
+            this.btnboolean.TabIndex = 6;
+            this.btnboolean.Text = "boolean";
+            this.btnboolean.UseVisualStyleBackColor = true;
+            this.btnboolean.Click += new System.EventHandler(this.btnboolean_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(899, 595);
+            this.Controls.Add(this.btnboolean);
             this.Controls.Add(this.txtTexto);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.btnActualizar);
@@ -122,6 +134,7 @@
         private System.Windows.Forms.Button btnActualizar;
         private System.Windows.Forms.Button btnEliminar;
         private System.Windows.Forms.TextBox txtTexto;
+        private System.Windows.Forms.Button btnboolean;
     }
 }
 

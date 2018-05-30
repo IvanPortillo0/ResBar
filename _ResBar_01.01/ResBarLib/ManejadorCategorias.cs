@@ -31,7 +31,7 @@ namespace ResBarLib
                     }
                     else
                     {
-                        query = "SELECT *+idCategoria FROM categoria;";
+                        query = "SELECT idCategoria FROM categoria;";
                         var resp = db.Query<Categoria>(query).ToList();
                         return resp;
                     }

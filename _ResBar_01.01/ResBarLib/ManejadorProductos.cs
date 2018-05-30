@@ -22,13 +22,13 @@ namespace ResBarLib
                         db.Open();
                     
                     string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =" + idCategoria + " ORDER BY idProducto;";
-                    var Respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
+                    var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
                         //sirve para que el funcione la variable Categorias de la tabla producto
                         prod.categoria = cat;
                         return prod;
                     }, splitOn: "idCategoria").Distinct().ToList();
 
-                    return Respuesta;
+                    return respuesta;
                 }
             }
             catch
@@ -47,8 +47,12 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM producto WHERE nombre REGEXP '^[" + nombreProd + "]';";
-                    var respuesta = db.Query<producto>(query).ToList();
+                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE nombre REGEXP '^[" + nombreProd + "]';";
+                    var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
+                        //sirve para que el funcione la variable Categorias de la tabla producto
+                        prod.categoria = cat;
+                        return prod;
+                    }, splitOn: "idCategoria").Distinct().ToList();
                     return respuesta;
                 }
 
@@ -59,7 +63,7 @@ namespace ResBarLib
             }
         }
 
-        //Agrega el objetoproducto" a la base de datos
+        //Agrega el objeto "producto" a la base de datos
         public static int Insertar(producto prod)
         {
             int respuesta = 0;
@@ -123,7 +127,8 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "DELETE FROM producto WHERE idProducto='" + prod.idProducto + "';";
+
+                    /*string query = "DELETE FROM producto WHERE idProducto='" + prod.idProducto + "';";
                     respuesta = db.Execute(query, prod);
                 }
 
@@ -131,8 +136,27 @@ namespace ResBarLib
                 {
                     throw new ErrorAplicationException("ManejadorProductos.Eliminar()$No se puede realizar la operación de Eliminar");
                 }
-                else { return respuesta; }
+                else { return respuesta; }*/
+                    string query;
 
+                    //Sirve para comprobar si hay registros en la tabla detalleorden que esten relacionados con el registro de producto que se desea borrar
+                    query = "SELECT COUNT(*) from detalleorden where idProducto=" + prod.idProducto + ";";
+                    respuesta = db.Query<int>(query).SingleOrDefault();
+
+
+                    if (respuesta == 0)
+                    {
+                        query = "DELETE FROM producto WHERE idProducto='" + prod.idProducto + "';";
+                        respuesta = db.Execute(query, prod);
+
+                        if (respuesta == 0) { MessageBox.Show("No Existe registro de id=" + prod.idProducto); ; }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la bd");
+                    }
+                    return respuesta;
+                }
             }
             catch
             {
@@ -149,8 +173,12 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT* FROM producto WHERE idProducto = '" + idProducto + "'; ";
-                    var respuesta = db.Query<producto>(query).SingleOrDefault();
+                    string query = "SELECT* FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE idProducto = '" + idProducto + "'; ";
+                    var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
+                        //sirve para que el funcione la variable Categorias de la tabla producto
+                        prod.categoria = cat;
+                        return prod;
+                    }, splitOn: "idCategoria").Distinct().SingleOrDefault();
                     return respuesta;
                 }
             }

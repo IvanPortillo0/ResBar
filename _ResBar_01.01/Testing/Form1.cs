@@ -31,7 +31,7 @@ namespace Testing
 
             for (int i = 0; i < prod.Count(); i++)
             {
-                MessageBox.Show(prod.ElementAt(i).nombre + "   " + prod.ElementAt(i).categoria.idCategoria);
+                MessageBox.Show(prod.ElementAt(i).nombre + "   " + prod.ElementAt(i).categoria.idCategoria + "   " + prod.ElementAt(i).categoria.nombre);
             }
         }
 
@@ -123,6 +123,29 @@ namespace Testing
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void btnboolean_Click(object sender, EventArgs e)
+        {
+            Boolean consinProd= true;
+
+
+            List<Categoria> categ = new List<Categoria>();
+            categ = ManejadorCategorias.Obtener(consinProd);
+            List<producto> prod = new List<producto>();
+
+            dataGridView1.DataSource = categ;
+            for (int i = 0; i < categ.Count(); i++)
+            {
+
+                prod = categ.ElementAt(i).productos;
+                for (int ie = 0; ie < prod.Count(); ie++)
+                {
+                    MessageBox.Show("" + categ.ElementAt(i).idCategoria + "-----" +prod.ElementAt(ie).idProducto );
+                }
+                   
+            }
+
         }
     }
 }
