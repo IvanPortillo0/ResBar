@@ -18,7 +18,7 @@ namespace PruebasCSharpResBar
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btn1a_Click(object sender, EventArgs e)
         {
             //PROBANDO metodos invocacion normal
             List<producto> prod = new List<producto>();
@@ -30,7 +30,7 @@ namespace PruebasCSharpResBar
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btn1b_Click(object sender, EventArgs e)
         {
 
             //probando metodos invocación con parametro invalido
@@ -50,12 +50,12 @@ namespace PruebasCSharpResBar
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btn1c_Click(object sender, EventArgs e)
         {
             //no se hara la prueba inyección de SQL porque es un in el que recibe el metodo ManejadorProductos.ObtenerxCategoria(int num)
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btn1d_Click(object sender, EventArgs e)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace PruebasCSharpResBar
             }
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void btn2a_Click(object sender, EventArgs e)
         {
             List<producto> prod = new List<producto>();
             prod = ManejadorProductos.Buscar("c", 1);
@@ -84,7 +84,7 @@ namespace PruebasCSharpResBar
             }
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void btn2b_Click(object sender, EventArgs e)
         {
             //prueba de inyeccion
             List<producto> prod = new List<producto>();
@@ -95,5 +95,6 @@ namespace PruebasCSharpResBar
                 MessageBox.Show("" + prod.ElementAt(i).nombre);
             }
         }
+        
     }
 }
