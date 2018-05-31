@@ -75,6 +75,7 @@ namespace ResBarLib
                         db.Open();
                     
                     string query;
+                    //verifica si existe el producto y si la categoria que se ingresará es de las que existe en la tabla catgoria
                     query = "SELECT COUNT(*) FROM producto WHERE idProducto=@p1;";
                     var respuesta1 = db.Query<int>(query, new { p1=prod.idProducto }).SingleOrDefault();
                     
@@ -109,7 +110,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-
+                    // verifica si el idCategoria a ingresar exista en la tabla categoria
                     var query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@p2;";
                     var respuesta1 = db.Query<int>(query, new { p2 = prod.categoria.idCategoria }).SingleOrDefault();
 
@@ -117,7 +118,7 @@ namespace ResBarLib
                     {
                         query = "UPDATE producto SET nombre=@nombr, precio=@preci, idCategoria=@idCategori, area=@are WHERE idProducto= @idProduct;";
                         respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
-                        if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto); ; }
+                        if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto);}
                     }
                     else
                     {

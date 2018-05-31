@@ -19,7 +19,6 @@ namespace ResBarLib
         public string cliente { get; set; }
         public DateTime fecha { get; set; }
         public string comentario { get; set; }
-
         public double total { get; set; }
         public Boolean activa { get; set; }
         public List<DetalleOrden> detalle { get; set; }

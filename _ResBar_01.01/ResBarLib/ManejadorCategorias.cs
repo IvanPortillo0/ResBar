@@ -93,7 +93,7 @@ namespace ResBarLib
                     
                         string query = "UPDATE categoria SET nombre=@nombr WHERE idCategoria=@idCategori;";
                         respuesta = db.Execute(query, new { idCategori = categoria.idCategoria, nombr = categoria.nombre });
-                        if (respuesta == 0) { MessageBox.Show("ManejadorCategorias.Actualizar()$No Existe registro de id=" + categoria.idCategoria); ; }
+                        if (respuesta == 0) { MessageBox.Show("ManejadorCategorias.Actualizar()$No Existe registro de id=" + categoria.idCategoria); }
                 }
                 return respuesta;
             }
@@ -103,7 +103,7 @@ namespace ResBarLib
             }
         }
 
-        //Elimina en la base de datos el "producto" que recibe como parametro
+        //Elimina en la base de datos la categoria que recibe como parametro
         public static int Eliminar(Categoria categoria)
         {
             int respuesta = 0;

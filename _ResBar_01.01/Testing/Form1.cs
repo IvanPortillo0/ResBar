@@ -40,10 +40,10 @@ namespace Testing
 
             producto prod = new producto();
             prod.idProducto = 4;
-            prod.nombre = "pruebaInsertar";
-            prod.precio = 1;
+            prod.nombre = "prueba1";
+            prod.precio = 1.0;
             prod.categoria.idCategoria = 1;
-            prod.area = 'c';
+            prod.area = 'b';
 
             try
             {
@@ -62,11 +62,11 @@ namespace Testing
         private void btnActualizar_Click(object sender, EventArgs e)
         {
             producto prod = new producto();
-            prod.idProducto = 5;
-            prod.nombre = "actualizar";
+            prod.idProducto = 4;
+            prod.nombre = "prueba1";
             prod.precio = 1.0;
             prod.categoria.idCategoria = 1;
-            prod.area = 'c';
+            prod.area = 'b';
 
             try
             {
@@ -86,10 +86,10 @@ namespace Testing
         {
             producto prod = new producto();
             prod.idProducto = 4;
-            prod.nombre = "','";
+            prod.nombre = "prueba1";
             prod.precio = 1.0;
             prod.categoria.idCategoria = 1;
-            prod.area = 'c';
+            prod.area = 'b';
 
             try
             {
@@ -126,6 +126,66 @@ namespace Testing
                    
             }
 
+        }
+
+        private void btnOrd_Click(object sender, EventArgs e)
+        {
+            Orden ord = new Orden();
+            ord.idOrden = 1;
+            ord.mesero = "mesero1";
+            ord.mesa = "mesa1";
+            ord.cliente = "cliente";
+            ord.fecha = new DateTime(2018, 05, 31, 08, 59, 00);
+            ord.comentario = "comentario";
+            ord.total = 10;
+            ord.activa = true;
+            
+            producto prod = new producto();
+            prod.idProducto = 4;
+            prod.nombre = "prueba1";
+            prod.precio = 1.0;
+            prod.categoria.idCategoria = 1;
+            prod.area = 'b';
+            
+            producto prod2 = new producto();
+            prod.idProducto = 5;
+            prod.nombre = "prueba2";
+            prod.precio = 2.0;
+            prod.categoria.idCategoria = 2;
+            prod.area = 'c';
+            
+            DetalleOrden det= new DetalleOrden();
+
+            List<DetalleOrden> detalle = new List<DetalleOrden>();
+            MessageBox.Show("deteccion001   detalle=ord.detalle");
+            detalle = ord.detalle;
+            MessageBox.Show("deteccion002");
+            det.producto = prod;
+            det.cantidad = 3;
+            //MessageBox.Show("deteccion004   detalle.add(det)");
+            //detalle.Add(det);
+            //MessageBox.Show("deteccion0005");
+            det.producto = prod2;
+            det.cantidad = 5;
+
+            //MessageBox.Show("deteccion004   detalle.add(det)");
+            //detalle.Add(det);
+            //MessageBox.Show("deteccion0005");
+
+
+            MessageBox.Show("deteccion0   ingresar");
+            try
+            {
+                if (ManejadorOrdenes.Insertar(ord) > 0)
+                {
+                    MessageBox.Show("Registro Insertado");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

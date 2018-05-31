@@ -47,7 +47,7 @@ namespace ResBarLib
                         db.Open();
                     string query = "UPDATE parametro SET nombre=@nombr, valor=@valo WHERE idProducto=@idparametr;";
                     respuesta = db.Execute(query, new { idparametr=param.idParametro, nombr=param.nombre, valo=param.valor });
-                    if (respuesta == 0) { MessageBox.Show("ManejadorParametros.Actualizar()$No Existe registro de id=" + param.idParametro); ; }
+                    if (respuesta == 0) { MessageBox.Show("ManejadorParametros.Actualizar()$No Existe registro de id=" + param.idParametro); }
                 }
                 return respuesta;
             }

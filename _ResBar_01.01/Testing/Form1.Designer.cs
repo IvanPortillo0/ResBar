@@ -35,6 +35,7 @@
             this.btnEliminar = new System.Windows.Forms.Button();
             this.txtTexto = new System.Windows.Forms.TextBox();
             this.btnboolean = new System.Windows.Forms.Button();
+            this.btnOrd = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -104,11 +105,22 @@
             this.btnboolean.UseVisualStyleBackColor = true;
             this.btnboolean.Click += new System.EventHandler(this.btnboolean_Click);
             // 
+            // btnOrd
+            // 
+            this.btnOrd.Location = new System.Drawing.Point(759, 25);
+            this.btnOrd.Name = "btnOrd";
+            this.btnOrd.Size = new System.Drawing.Size(108, 50);
+            this.btnOrd.TabIndex = 7;
+            this.btnOrd.Text = "Insert orden";
+            this.btnOrd.UseVisualStyleBackColor = true;
+            this.btnOrd.Click += new System.EventHandler(this.btnOrd_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(899, 595);
+            this.Controls.Add(this.btnOrd);
             this.Controls.Add(this.btnboolean);
             this.Controls.Add(this.txtTexto);
             this.Controls.Add(this.btnEliminar);
@@ -135,6 +147,7 @@
         private System.Windows.Forms.Button btnEliminar;
         private System.Windows.Forms.TextBox txtTexto;
         private System.Windows.Forms.Button btnboolean;
+        private System.Windows.Forms.Button btnOrd;
     }
 }
 
