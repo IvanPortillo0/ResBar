@@ -22,18 +22,25 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open();
 
+
+                    var catDictionary = new Dictionary<int, Categoria>();
                     string query;
                     if (ConSinProducto)
                     {
-                        query = "SELECT * FROM categoria;";
-                        var resp = db.Query<Categoria>(query).ToList();
-                        return resp;
+                        query = "SELECT * FROM categoria AS c INNER JOIN producto AS p ON c.idCategoria = p.idCategoria order by c.idCategoria;";
+                        var respuesta = db.Query<Categoria, producto, Categoria>(query, (cat, prod) => {
+
+                            cat.productos.Add(prod);
+                            return cat;
+
+                        }, splitOn: "idCategoria").ToList();
+                        return respuesta;
                     }
                     else
                     {
-                        query = "SELECT idCategoria FROM categoria;";
-                        var resp = db.Query<Categoria>(query).ToList();
-                        return resp;
+                        query = "SELECT * FROM categoria;";
+                        var respuesta = db.Query<Categoria>(query).ToList();
+                        return respuesta;
                     }
                 }
 

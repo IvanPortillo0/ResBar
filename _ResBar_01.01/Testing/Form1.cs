@@ -111,9 +111,9 @@ namespace Testing
 
 
             List<Categoria> categ = new List<Categoria>();
-            categ = ManejadorCategorias.Obtener(consinProd);
             List<producto> prod = new List<producto>();
-
+            categ = ManejadorCategorias.Obtener(consinProd);
+            
             dataGridView1.DataSource = categ;
             for (int i = 0; i < categ.Count(); i++)
             {
@@ -121,7 +121,7 @@ namespace Testing
                 prod = categ.ElementAt(i).productos;
                 for (int ie = 0; ie < prod.Count(); ie++)
                 {
-                    MessageBox.Show("" + categ.ElementAt(i).idCategoria + "-----" +prod.ElementAt(ie).idProducto );
+                    MessageBox.Show("interfaz:" + categ.ElementAt(i).idCategoria + "-----" +prod.ElementAt(ie).idProducto );
                 }
                    
             }
@@ -155,23 +155,18 @@ namespace Testing
             prod.area = 'c';
             
             DetalleOrden det= new DetalleOrden();
-
-            List<DetalleOrden> detalle = new List<DetalleOrden>();
-            MessageBox.Show("deteccion001   detalle=ord.detalle");
-            detalle = ord.detalle;
-            MessageBox.Show("deteccion002");
+            
+            ord.detalle = new List<DetalleOrden>();
+            
             det.producto = prod;
             det.cantidad = 3;
-            //MessageBox.Show("deteccion004   detalle.add(det)");
-            //detalle.Add(det);
-            //MessageBox.Show("deteccion0005");
-            det.producto = prod2;
+            ord.detalle.Add(det);
+            
+            det.producto = prod;
             det.cantidad = 5;
 
-            //MessageBox.Show("deteccion004   detalle.add(det)");
-            //detalle.Add(det);
-            //MessageBox.Show("deteccion0005");
-
+            ord.detalle.Add(det);
+            
 
             MessageBox.Show("deteccion0   ingresar");
             try

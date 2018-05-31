@@ -47,6 +47,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
+
                     string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.nombre LIKE ('%@nombreProd%');";
                     var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
                         //sirve para que el funcione la variable Categorias de la tabla producto

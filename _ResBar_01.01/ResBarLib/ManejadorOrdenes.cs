@@ -14,7 +14,7 @@ namespace ResBarLib
     {
         //va a la base de datos y filtra todas las ordenes cuyo campo Activa=TRUE, y devuelve un colección de objetos Orden
 
-        public static List<Orden> OrdenesActivas()
+        public static List<Orden> ObtenerActivas()
         {
             try
             {
@@ -55,14 +55,15 @@ namespace ResBarLib
 
         //Obtiene todas las ordenes que contenga el "criterio buscado".- (mesa, mesero o cliente)
         public static List<Orden> BuscarActivas(string criterio)
-        {
+        {   
             try
             {
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
-                        db.Open();
-                    string query = "select * from orden where (mesero like '%@criteri%') or (mesa like '%@criteri%') or (cliente like '%@criteri%') ";
+                        db.Open(); 
+                    
+                    string query = "select * from orden where (mesero like '%@criteri%') or (mesa like '%@criteri%') or (cliente like '%@criteri%') or (comentario like '%@criteri%' ";
                     var respuesta = db.Query<Orden>(query, new { criteri=criterio }).ToList();
                     return respuesta;
                 }
@@ -85,15 +86,14 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    
+                
                     //los siguientes 3 if son para saber si: -mesero, mesa y cliente tiene al menos uno de ello dato -total mayor a 0 -tenga producto
-                    if (!String.IsNullOrEmpty(orden.mesero) || !String.IsNullOrEmpty(orden.mesa) || !String.IsNullOrEmpty(orden.cliente))
+                    if (orden.mesero!=null || orden.mesa!=null || orden.cliente!=null)
                     {
                         if (orden.total > 0)
                         {
                             if (orden.detalle.Count > 0)
                             {
-                                
                                 string query = "INSERT INTO orden (idOrden, mesero, mesa, cliente, fecha, comentario, total, activa) VALUES(@idOrde, @meser, @mesaa, @client, @fech, @comentari, @tota, @activ);";
                                 respuesta = db.Execute(query, new { idOrde=orden.idOrden, meser=orden.mesero, mesaa=orden.mesa, client=orden.cliente, fech=orden.fecha, comentari=orden.comentario, tota=orden.total, activ=orden.activa });
                                 for (int i=0; i < orden.detalle.Count; i++)
