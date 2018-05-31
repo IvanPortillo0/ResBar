@@ -37,7 +37,33 @@ namespace Testing
 
         private void btnInsertar_Click(object sender, EventArgs e)
         {
-            Categoria cat = new Categoria();
+
+            producto prod = new producto();
+            prod.idProducto = 4;
+            prod.nombre = "pruebaInsertar";
+            prod.precio = 1;
+            prod.categoria.idCategoria = 1;
+            prod.area = 'c';
+
+            try
+            {
+                if (ManejadorProductos.Insertar(prod) > 0)
+                {
+                    MessageBox.Show("Registro Insertado");
+                }
+                else
+                {
+                    MessageBox.Show("No se Inserto");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            /*Categoria cat = new Categoria();
             try
             {
                 cat.idCategoria = Convert.ToInt32(txtTexto.Text);
@@ -63,7 +89,7 @@ namespace Testing
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
+            }*/
 
         }
 

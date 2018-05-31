@@ -12,7 +12,7 @@ namespace ResBarLib
     public static class ManejadorProductos
     {
         //Devuelve una colección de objetos productos que se corresponden con el Identificador de categoría que se pasó como parámetro.
-        public static List<producto> ObtenerxCategoria(int idCategoria)
+        public static List<producto> ObtenerxCategoria(int idCateg)
         {
             try
             {
@@ -21,12 +21,12 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open();
                     
-                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =" + idCategoria + " ORDER BY idProducto;";
+                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =(@idCateg) ORDER BY idProducto;";
                     var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
                         //sirve para que el funcione la variable Categorias de la tabla producto
                         prod.categoria = cat;
                         return prod;
-                    }, splitOn: "idCategoria").Distinct().ToList();
+                    }, new { idCateg }, splitOn: "idCategoria").Distinct().ToList();
 
                     return respuesta;
                 }
@@ -47,12 +47,12 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE nombre REGEXP '^[" + nombreProd + "]';";
+                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.nombre LIKE ('%@nombreProd%');";
                     var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
                         //sirve para que el funcione la variable Categorias de la tabla producto
                         prod.categoria = cat;
                         return prod;
-                    }, splitOn: "idCategoria").Distinct().ToList();
+                    },new { nombreProd }, splitOn: "idCategoria").Distinct().ToList();
                     return respuesta;
                 }
 
@@ -73,16 +73,31 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES('" + prod.idProducto + "', '" + prod.nombre + "', '" + prod.precio + "', '" + prod.categoria.idCategoria + "', '" + prod.area + "');";
-                    respuesta = db.Execute(query, prod);
-                }
 
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar");
-                }
-                else { return respuesta; }
+                    MessageBox.Show("001");
+                    string query;
+                    string query1 = "SELECT COUNT(*) FROM producto WHERE idProducto=@p1;";
+                    var respuesta1 = db.Query<int>(query1, new { p1=prod.idProducto }).SingleOrDefault();
 
+                    MessageBox.Show("002");
+                    string query2 = "SELECT COUNT(*) FROM categoria WHERE idProducto=@p2;";
+                    var respuesta2 = db.Query<int>(query2, new { p2=prod.categoria.idCategoria }).SingleOrDefault();
+
+
+                    MessageBox.Show("1.1-" + respuesta +"     1.2-"+ respuesta2);
+
+                    if (respuesta1 == 0 && respuesta2==1)
+                    {
+                        query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES('@prod.idProducto', '@prod.nombre', '@prod.precio', '@prod.categoria.idCategoria', '@prod.area');";
+                        respuesta = db.Execute(query, new { prod.idProducto, prod.nombre, prod.precio, prod.categoria.idCategoria, prod.area });
+                        MessageBox.Show("1-   " + respuesta);
+                    }
+                    else
+                    {
+                        MessageBox.Show("ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar");
+                    }
+                    return respuesta;
+                }
             }
             catch
             {
@@ -140,7 +155,7 @@ namespace ResBarLib
                     string query;
 
                     //Sirve para comprobar si hay registros en la tabla detalleorden que esten relacionados con el registro de producto que se desea borrar
-                    query = "SELECT COUNT(*) from detalleorden where idProducto=" + prod.idProducto + ";";
+                    query = "SELECT COUNT(*) FROM detalleorden WHERE idProducto=" + prod.idProducto + ";";
                     respuesta = db.Query<int>(query).SingleOrDefault();
 
 

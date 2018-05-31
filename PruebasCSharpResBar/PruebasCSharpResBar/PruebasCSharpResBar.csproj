@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ResBarLib">
-      <HintPath>..\..\ResBar\_ResBar_01.01\ResBarLib\bin\Release\ResBarLib.dll</HintPath>
+    <Reference Include="ResBarLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\_ResBar_01.01\ResBarLib\bin\Release\ResBarLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
