@@ -21,7 +21,7 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open();
                     
-                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =(@idCateg) ORDER BY idProducto;";
+                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.idCategoria =@idCateg ORDER BY idProducto;";
                     var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
                         //sirve para que el funcione la variable Categorias de la tabla producto
                         prod.categoria = cat;
@@ -73,24 +73,18 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-
-                    MessageBox.Show("001");
+                    
                     string query;
-                    string query1 = "SELECT COUNT(*) FROM producto WHERE idProducto=@p1;";
-                    var respuesta1 = db.Query<int>(query1, new { p1=prod.idProducto }).SingleOrDefault();
-
-                    MessageBox.Show("002");
-                    string query2 = "SELECT COUNT(*) FROM categoria WHERE idProducto=@p2;";
-                    var respuesta2 = db.Query<int>(query2, new { p2=prod.categoria.idCategoria }).SingleOrDefault();
-
-
-                    MessageBox.Show("1.1-" + respuesta +"     1.2-"+ respuesta2);
+                    query = "SELECT COUNT(*) FROM producto WHERE idProducto=@p1;";
+                    var respuesta1 = db.Query<int>(query, new { p1=prod.idProducto }).SingleOrDefault();
+                    
+                    query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@p2;";
+                    var respuesta2 = db.Query<int>(query, new { p2=prod.categoria.idCategoria }).SingleOrDefault();
 
                     if (respuesta1 == 0 && respuesta2==1)
                     {
-                        query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES('@prod.idProducto', '@prod.nombre', '@prod.precio', '@prod.categoria.idCategoria', '@prod.area');";
-                        respuesta = db.Execute(query, new { prod.idProducto, prod.nombre, prod.precio, prod.categoria.idCategoria, prod.area });
-                        MessageBox.Show("1-   " + respuesta);
+                        query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES(@idProduct, @nombr, @preci, @idCategori, @are);";
+                        respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
                     }
                     else
                     {
@@ -115,16 +109,22 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "UPDATE producto SET nombre='" + prod.nombre + "', precio='" + prod.precio + "', idCategoria='" + prod.categoria.idCategoria + "', area='" + prod.area + "' WHERE idProducto= '" + prod.idProducto + "';";
-                    respuesta = db.Execute(query, prod);
-                }
 
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar");
-                }
-                else { return respuesta; }
+                    var query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@p2;";
+                    var respuesta1 = db.Query<int>(query, new { p2 = prod.categoria.idCategoria }).SingleOrDefault();
 
+                    if (respuesta1 == 1)
+                    {
+                        query = "UPDATE producto SET nombre=@nombr, precio=@preci, idCategoria=@idCategori, area=@are WHERE idProducto= @idProduct;";
+                        respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
+                        if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto); ; }
+                    }
+                    else
+                    {
+                        MessageBox.Show("ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar");
+                    }
+                }
+                return respuesta;
             }
             catch
             {
@@ -143,32 +143,22 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open();
 
-                    /*string query = "DELETE FROM producto WHERE idProducto='" + prod.idProducto + "';";
-                    respuesta = db.Execute(query, prod);
-                }
-
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorProductos.Eliminar()$No se puede realizar la operación de Eliminar");
-                }
-                else { return respuesta; }*/
                     string query;
-
                     //Sirve para comprobar si hay registros en la tabla detalleorden que esten relacionados con el registro de producto que se desea borrar
-                    query = "SELECT COUNT(*) FROM detalleorden WHERE idProducto=" + prod.idProducto + ";";
-                    respuesta = db.Query<int>(query).SingleOrDefault();
+                    query = "SELECT COUNT(*) FROM detalleorden WHERE idProducto=@idProduct;";
+                    respuesta = db.Query<int>(query, new { idProduct=prod.idProducto }).SingleOrDefault();
 
 
                     if (respuesta == 0)
                     {
-                        query = "DELETE FROM producto WHERE idProducto='" + prod.idProducto + "';";
-                        respuesta = db.Execute(query, prod);
+                        query = "DELETE FROM producto WHERE idProducto=@idProduct;";
+                        respuesta = db.Execute(query, new { idProduct = prod.idProducto });
 
-                        if (respuesta == 0) { MessageBox.Show("No Existe registro de id=" + prod.idProducto); ; }
+                        if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Eliminar()$No Existe registro de id=" + prod.idProducto); }
                     }
                     else
                     {
-                        MessageBox.Show("No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la bd");
+                        MessageBox.Show("ManejadorProductos.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla detalleorden de la bd");
                     }
                     return respuesta;
                 }
@@ -188,12 +178,12 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT* FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE idProducto = '" + idProducto + "'; ";
+                    string query = "SELECT* FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE idProducto = @idpro; ";
                     var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
                         //sirve para que el funcione la variable Categorias de la tabla producto
                         prod.categoria = cat;
                         return prod;
-                    }, splitOn: "idCategoria").Distinct().SingleOrDefault();
+                    }, new { idpro = idProducto }, splitOn: "idCategoria").Distinct().SingleOrDefault();
                     return respuesta;
                 }
             }

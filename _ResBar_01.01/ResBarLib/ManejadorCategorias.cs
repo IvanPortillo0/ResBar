@@ -55,15 +55,23 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open();
                     
-                    string query = "INSERT INTO categoria (idCategoria, nombre) VALUES('" + categoria.idCategoria + "', '" + categoria.nombre + "');";
-                    respuesta = db.Execute(query, categoria);
                     
-                }
 
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorCategorias.Insertar()$No se puede realizar la operación de Insertar"); }
-                else{ return respuesta; }
+                    string query;
+                    query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@p1;";
+                    var respuesta1 = db.Query<int>(query, new { p1 = categoria.idCategoria }).SingleOrDefault();
+
+                    if (respuesta1 == 0 )
+                    {
+                        query = "INSERT INTO categoria (idCategoria, nombre) VALUES(@idCategori, @nombr);";
+                        respuesta = db.Execute(query, new { idCategori = categoria.idCategoria, nombr = categoria.nombre });
+                    }
+                    else
+                    {
+                        MessageBox.Show("ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar");
+                    }
+                    return respuesta;
+                }
 
             }
             catch
@@ -82,14 +90,12 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "UPDATE categoria SET nombre='" + categoria.nombre + "' WHERE idCategoria= '" + categoria.idCategoria + "';";
-                    respuesta = db.Execute(query, categoria);
+                    
+                        string query = "UPDATE categoria SET nombre=@nombr WHERE idCategoria=@idCategori;";
+                        respuesta = db.Execute(query, new { idCategori = categoria.idCategoria, nombr = categoria.nombre });
+                        if (respuesta == 0) { MessageBox.Show("ManejadorCategorias.Actualizar()$No Existe registro de id=" + categoria.idCategoria); ; }
                 }
-
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorCategorias.Actualizar()$No se puede realizar la operación de Actualizar"); }
-                else { return respuesta; }
+                return respuesta;
             }
             catch
             {
@@ -107,16 +113,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    //asi estaba
-                    /*string query = "DELETE FROM categoria WHERE idCategoria='" + categoria.idCategoria + "';";
-                    respuesta = db.Execute(query, categoria);
-                }
 
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorCategorias.Eliminar()$No se puede realizar la operacion de Eliminar."); }
-                else { return respuesta; }*/
-                    //empieza modificacion
                     string query;
 
                     //Sirve para comprobar si hay registros en la tabla productos que esten relacionados con el registro de categoria que se desea borrar
@@ -126,19 +123,17 @@ namespace ResBarLib
 
                     if (respuesta==0)
                     {
-                        query = "DELETE FROM categoria WHERE idCategoria='" + categoria.idCategoria + "';";
-                        respuesta = db.Execute(query, categoria);
+                        query = "DELETE FROM categoria WHERE idCategoria=@idCategori;";
+                        respuesta = db.Execute(query, new { idCategori=categoria.idCategoria });
 
-                        if (respuesta == 0) { MessageBox.Show("No Existe registro de id=" + categoria.idCategoria); respuesta = -1; }
+                        if (respuesta == 0) { MessageBox.Show("ManejadorCategorias.Eliminar()$No Existe registro de id=" + categoria.idCategoria); }
                     }
                     else
                     {
-                        MessageBox.Show("No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la bd");
-                        respuesta = -1;
+                        MessageBox.Show("ManejadorCategorias.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la bd");
                     }
                     return respuesta;
                 }
-                //termina modificación
             }
             catch
             {

@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Dapper;
 using MySql.Data;
 using MySql.Data.MySqlClient;
@@ -44,16 +45,11 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "UPDATE parametro SET nombre='" + param.nombre + "', valor='" + param.valor + "' WHERE idProducto= '" + param.idParametro + "';";
-                    respuesta = db.Execute(query, param);
+                    string query = "UPDATE parametro SET nombre=@nombr, valor=@valo WHERE idProducto=@idparametr;";
+                    respuesta = db.Execute(query, new { idparametr=param.idParametro, nombr=param.nombre, valo=param.valor });
+                    if (respuesta == 0) { MessageBox.Show("ManejadorParametros.Actualizar()$No Existe registro de id=" + param.idParametro); ; }
                 }
-
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorParametros.Actualizar()$No se puede realizar la operación de Actualizar");
-                }
-                else { return respuesta; }
-
+                return respuesta;
             }
             catch
             {
@@ -70,8 +66,8 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT* FROM parametro WHERE idParametro = '" + idparametro + "'; ";
-                    var respuesta = db.Query<parametro>(query).SingleOrDefault();
+                    string query = "SELECT* FROM parametro WHERE idParametro = @idParametr; ";
+                    var respuesta = db.Query<parametro>(query, new { idParametr= idparametro }).SingleOrDefault();
                     return respuesta;
                 }
 

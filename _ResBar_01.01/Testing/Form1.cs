@@ -51,66 +51,28 @@ namespace Testing
                 {
                     MessageBox.Show("Registro Insertado");
                 }
-                else
-                {
-                    MessageBox.Show("No se Inserto");
-                }
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-
-
-            /*Categoria cat = new Categoria();
-            try
-            {
-                cat.idCategoria = Convert.ToInt32(txtTexto.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            cat.nombre = "categoria";
-
-            try
-            {
-                if (ManejadorCategorias.Insertar(cat) > 0)
-                {
-                    MessageBox.Show("Registro Insertado");
-                }
-                else
-                {
-                    MessageBox.Show("No se inserto");
-                }
-               
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }*/
-
         }
 
         private void btnActualizar_Click(object sender, EventArgs e)
         {
-            producto p2 = new producto();
-            p2.idProducto = 11;
-            p2.nombre = "pruebaActualizar";
-            p2.precio = 15.00;
-            p2.categoria.idCategoria = 2;
-            p2.area = 'c';
+            producto prod = new producto();
+            prod.idProducto = 5;
+            prod.nombre = "actualizar";
+            prod.precio = 1.0;
+            prod.categoria.idCategoria = 1;
+            prod.area = 'c';
 
             try
             {
-                if (ManejadorProductos.Actualizar(p2) > 0)
+                if (ManejadorProductos.Actualizar(prod) > 0)
                 {
                     MessageBox.Show("Registro Actualizado");
-                }
-                else
-                {
-                    MessageBox.Show("No se Actualizo");
                 }
 
             }
@@ -122,26 +84,18 @@ namespace Testing
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            Categoria cat = new Categoria();
+            producto prod = new producto();
+            prod.idProducto = 4;
+            prod.nombre = "','";
+            prod.precio = 1.0;
+            prod.categoria.idCategoria = 1;
+            prod.area = 'c';
+
             try
             {
-                cat.idCategoria = Convert.ToInt32(txtTexto.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            cat.nombre = "categoria";
-               
-            try
-            {
-                if (ManejadorCategorias.Eliminar(cat) > 0)
+                if (ManejadorProductos.Eliminar(prod) > 0)
                 {
                     MessageBox.Show("Registro Eliminado");
-                }
-                else
-                {
-                    MessageBox.Show("No se Elimino");// se podria quitar ya que muestra mensajes personalizados para cada caso cuando no se hace la eliminación
                 }
 
             }

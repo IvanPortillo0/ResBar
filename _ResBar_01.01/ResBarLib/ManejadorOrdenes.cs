@@ -6,6 +6,7 @@ using System.Linq;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System;
+using System.Windows.Forms;
 
 namespace ResBarLib
 {
@@ -41,8 +42,8 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM orden WHERE idOrden='" + idOrden + "';";
-                    var respuesta = db.Query<Orden>(query).ToList();
+                    string query = "SELECT * FROM orden WHERE idOrden=@idOrde;";
+                    var respuesta = db.Query<Orden>(query, new { idOrde=idOrden }).ToList();
                     return respuesta;
                 }
             }
@@ -61,8 +62,8 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "select * from orden where (mesero like '%@criterio%') or (mesa like '%@criterio%') or (cliente like '%@criterio%') ";
-                    var respuesta = db.Query<Orden>(query).ToList();
+                    string query = "select * from orden where (mesero like '%@criteri%') or (mesa like '%@criteri%') or (cliente like '%@criteri%') ";
+                    var respuesta = db.Query<Orden>(query, new { criteri=criterio }).ToList();
                     return respuesta;
                 }
             }
@@ -138,16 +139,14 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "DELETE a1, a2 FROM detalleorden AS a1 INNER JOIN orden AS a2 WHERE a1.idOrden = a2.idOrden AND a1.idOrden LIKE '" + orden.idOrden + "';";
-                    respuesta = db.Execute(query, orden);
+                    string query = "DELETE FROM detalleorden WHERE idOrden=@idOrde;";
+                    respuesta = db.Execute(query, new { idOrde=orden.idOrden });
+                    query = "DELETE FROM orden WHERE idOrden=@idOrde;";
+                    respuesta = db.Execute(query, new { idOrde = orden.idOrden });
+                    if (respuesta == 0) { MessageBox.Show("ManejadorOrdenes.Eliminar()$No Existe registro de id=" + orden.idOrden); }
                 }
 
-                if (respuesta < 0)
-                {
-                    throw new ErrorAplicationException("ManejadorOrdenes.Eliminar()$No se puede realizar la operación de Eliminar");
-                }
-                else { return respuesta; }
-
+                return respuesta;
             }
             catch
             {
@@ -192,8 +191,8 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM orden WHERE fecha= " + fecha + " AND estado=false;";
-                    var respuesta = db.Query<Orden>(query).ToList();
+                    string query = "SELECT * FROM orden WHERE fecha=@fech AND estado=false;";
+                    var respuesta = db.Query<Orden>(query, new { fech = fecha }).ToList();
                     return respuesta;
                 }
             }
@@ -214,8 +213,8 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    String query = "SELECT * FROM orden WHERE fecha >=" + fechaMenor + " AND fecha<= " + fechaMayor + "AND estado=false";
-                    var respuesta = db.Query<Orden>(query).ToList();
+                    String query = "SELECT * FROM orden WHERE fecha >=@fechaMay AND fecha<=@fechaMen AND estado=false";
+                    var respuesta = db.Query<Orden>(query, new { fechaMay=fechaMayor, fechaMen=fechaMenor }).ToList();
                     return respuesta;
                 }
             }
