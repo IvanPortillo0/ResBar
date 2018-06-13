@@ -13,7 +13,7 @@ namespace ResBarLib
         {
             producto = new producto();
         }
-
+        
         public producto producto { get; set; }
         public double cantidad { get; set; }
     }

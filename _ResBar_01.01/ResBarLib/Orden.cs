@@ -25,41 +25,42 @@ namespace ResBarLib
 
 
         //Métodos Propios de la Clase Producto.-
-        //Falta Agregar los manejos de Excepciones..-
         public void CalcularTotal()
         {
             var cuenta = new double();
             //recorro el detalleOrden para calcular el total de la orden
-            foreach (DetalleOrden orden in detalle)
+            foreach (DetalleOrden detOrden in detalle)
             {
                 //asigno a una variable "cuenta" la suma cantidad multiplicada por el precio de cada producto.-
-                cuenta += orden.producto.precio * orden.cantidad;
+                cuenta += detOrden.producto.precio * detOrden.cantidad;
             }
             //asigno el nuevo valor a "total".-
             this.total = cuenta;
         }
-
-        //Falta Agregar los manejos de Excepciones..-
+        
         public void AgregarProducto(producto prod, double cant)
         {
             var nuevoDetalle = new DetalleOrden();
-            //Verificar si el producto ya existe en el "DetalleOrde"
+            Boolean encontrado = false;
+            //Verificar si el producto ya existe en el "DetalleOrden"
             //Busco dentro de la lista de "DetalleOrde" el producto.
-            foreach (DetalleOrden orden in detalle)
+            foreach (DetalleOrden detOrden in detalle)
             {
-                if (orden.producto.nombre == prod.nombre)
+                if (detOrden.producto.nombre == prod.nombre)
                 {
-                    orden.cantidad += cant; //Sumo a la orden la cantidad
+                    detOrden.cantidad += cant; //Sumo a la orden la cantidad
+                    encontrado = true;
+                    break;
+                }
+            }
 
-                }
-                else
-                {
-                    //Si no es igual instancio un nuevo objeto de "DetalleOrden"
-                    nuevoDetalle.producto = prod;
-                    nuevoDetalle.cantidad = cant;
-                    detalle.Add(nuevoDetalle);
-                    this.CalcularTotal();
-                }
+            if (!encontrado)
+            {
+                //Si no es igual instancio un nuevo objeto de "DetalleOrden"
+                nuevoDetalle.producto = prod;
+                nuevoDetalle.cantidad = cant;
+                detalle.Add(nuevoDetalle);
+                this.CalcularTotal();
             }
         }
 
@@ -75,7 +76,6 @@ namespace ResBarLib
                 }
 
             }
-
         }
 
 

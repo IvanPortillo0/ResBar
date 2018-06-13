@@ -48,12 +48,12 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open();
 
-                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.nombre LIKE ('%@nombreProd%');";
+                    string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE a.nombre LIKE @nombrePro;";
                     var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
                         //sirve para que el funcione la variable Categorias de la tabla producto
                         prod.categoria = cat;
                         return prod;
-                    },new { nombreProd }, splitOn: "idCategoria").Distinct().ToList();
+                    }, new { nombrePro = "%" + nombreProd + "%" }, splitOn: "idCategoria").Distinct().ToList();
                     return respuesta;
                 }
 
@@ -68,32 +68,42 @@ namespace ResBarLib
         public static int Insertar(producto prod)
         {
             int respuesta = 0;
+           
             try
             {
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    
-                    string query;
-                    //verifica si existe el producto y si la categoria que se ingresará es de las que existe en la tabla catgoria
-                    query = "SELECT COUNT(*) FROM producto WHERE idProducto=@p1;";
-                    var respuesta1 = db.Query<int>(query, new { p1=prod.idProducto }).SingleOrDefault();
-                    
-                    query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@p2;";
-                    var respuesta2 = db.Query<int>(query, new { p2=prod.categoria.idCategoria }).SingleOrDefault();
 
-                    if (respuesta1 == 0 && respuesta2==1)
+                    if (prod.idProducto > 0 && (!prod.nombre.Equals("")) && prod.precio > 0 && prod.categoria.idCategoria > 0 && (prod.area == 'c' || prod.area == 'b'))
                     {
-                        query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES(@idProduct, @nombr, @preci, @idCategori, @are);";
-                        respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
+
+                        string query;
+                        //verifica si existe el producto y si la categoria que se ingresará es de las que existe en la tabla catgoria
+                        query = "SELECT COUNT(*) FROM producto WHERE idProducto=@idProduct;";
+                        var respuesta1 = db.Query<int>(query, new { idProduct = prod.idProducto }).SingleOrDefault();
+
+                        query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@idCategori;";
+                        var respuesta2 = db.Query<int>(query, new { idCategori = prod.categoria.idCategoria }).SingleOrDefault();
+
+                        if (respuesta1 == 0 && respuesta2 == 1)
+                        {
+                            query = "INSERT INTO producto (idProducto, nombre, precio, idCategoria, area) VALUES(@idProduct, @nombr, @preci, @idCategori, @are);";
+                            respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
+                        }
+                        else
+                        {
+                            MessageBox.Show("ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar, idCategoria ingresado no existe o idProducto ingresado ya existe");
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar");
+                        MessageBox.Show("ManejadorProductos.Insertar()$Campo o campos invalidos");
                     }
-                    return respuesta;
                 }
+
+                return respuesta;
             }
             catch
             {
@@ -111,21 +121,31 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    // verifica si el idCategoria a ingresar exista en la tabla categoria
-                    var query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@p2;";
-                    var respuesta1 = db.Query<int>(query, new { p2 = prod.categoria.idCategoria }).SingleOrDefault();
 
-                    if (respuesta1 == 1)
+                    if (prod.idProducto > 0 && (!prod.nombre.Equals("")) && prod.precio > 0 && prod.categoria.idCategoria > 0 && (prod.area == 'c' || prod.area == 'b'))
                     {
-                        query = "UPDATE producto SET nombre=@nombr, precio=@preci, idCategoria=@idCategori, area=@are WHERE idProducto= @idProduct;";
-                        respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
-                        if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto);}
+
+                        // verifica si el idCategoria a ingresar exista en la tabla categoria
+                        var query = "SELECT COUNT(*) FROM categoria WHERE idCategoria=@p2;";
+                        var respuesta1 = db.Query<int>(query, new { p2 = prod.categoria.idCategoria }).SingleOrDefault();
+
+                        if (respuesta1 == 1)
+                        {
+                            query = "UPDATE producto SET nombre=@nombr, precio=@preci, idCategoria=@idCategori, area=@are WHERE idProducto= @idProduct;";
+                            respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
+                            if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto); }
+                        }
+                        else
+                        {
+                            MessageBox.Show("ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar, la categoria ingresada no existe");
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar");
+                        MessageBox.Show("ManejadorProductos.Actualizar()$Campo o campos invalidos");
                     }
                 }
+
                 return respuesta;
             }
             catch
@@ -174,20 +194,29 @@ namespace ResBarLib
         //Realiza una petición a la base de datos y devuelve un objeto producto que cuyo IDProducto coincide con el valor del parámetro
         public static producto Obtener(int idProducto)
         {
+            producto respuesta = new producto();
             try
             {
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT* FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE idProducto = @idpro; ";
-                    var respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
-                        //sirve para que el funcione la variable Categorias de la tabla producto
-                        prod.categoria = cat;
-                        return prod;
-                    }, new { idpro = idProducto }, splitOn: "idCategoria").Distinct().SingleOrDefault();
-                    return respuesta;
+
+                    if (idProducto > 0)
+                    {
+                        string query = "SELECT * FROM producto AS a INNER JOIN categoria AS b ON a.idCategoria = b.idCategoria WHERE idProducto = @idpro;";
+                        respuesta = db.Query<producto, Categoria, producto>(query, (prod, cat) => {
+                            //sirve para que el funcione la variable Categorias de la tabla producto
+                            prod.categoria = cat;
+                            return prod;
+                        }, new { idpro = idProducto }, splitOn: "idCategoria").Distinct().SingleOrDefault();
+                    }
+                    else
+                    {
+                        MessageBox.Show("ManejadorProductos.Obtener()$id no existe");
+                    }
                 }
+                return respuesta;
             }
             catch
             {

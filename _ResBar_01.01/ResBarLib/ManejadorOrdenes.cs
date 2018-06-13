@@ -34,18 +34,46 @@ namespace ResBarLib
         }
 
         //Recibe un entero que indica el ID de la orden y luego devuelve el objeto orden completo que corresponde
-        public static List<Orden> Obtener(int idOrden)
+        public static Orden Obtener(int idOrden)
         {
+
+            Orden objOrden = new Orden();
             try
             {
+                DetalleOrden deto = new DetalleOrden();
+                List<DetalleOrden> lstDetalle = new List<DetalleOrden>();
+
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM orden WHERE idOrden=@idOrde;";
-                    var respuesta = db.Query<Orden>(query, new { idOrde=idOrden }).ToList();
-                    return respuesta;
+
+                    if (idOrden > 0)
+                    {
+                        string query = "SELECT * FROM orden WHERE idOrden=@idOrde;";
+                        objOrden = db.Query<Orden>(query, new { idOrde = idOrden }).SingleOrDefault();
+
+                        query = "SELECT a.idProducto, a.cantidad, b.idProducto, b.nombre, b.precio, b.idCategoria, b.area, c.idCategoria, c.nombre FROM detalleorden AS a " +
+                            "INNER JOIN producto AS b ON a.idProducto = b.idProducto INNER JOIN categoria AS c ON b.idCategoria = c.idCategoria WHERE a.idOrden = @idOrde;";
+                        lstDetalle = db.Query<DetalleOrden, producto, Categoria, DetalleOrden>(query, (detOrd, prod, cat) => {
+                            prod.categoria = cat;
+                            detOrd.producto = prod;
+                            return detOrd;
+                        }, new { idOrde = idOrden }, splitOn: "idProducto,idCategoria").Distinct().ToList();
+
+                        objOrden.detalle = new List<DetalleOrden>();
+                        for (int i = 0; i < lstDetalle.Count(); i++)
+                        {
+                            objOrden.detalle.Add(lstDetalle.ElementAt(i));
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("ManejadorProductos.Obtener()$id no existe");
+                    }
                 }
+
+                return objOrden;
             }
             catch
             {
@@ -55,7 +83,7 @@ namespace ResBarLib
 
         //Obtiene todas las ordenes que contenga el "criterio buscado".- (mesa, mesero o cliente)
         public static List<Orden> BuscarActivas(string criterio)
-        {   
+        {
             try
             {
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
@@ -63,8 +91,8 @@ namespace ResBarLib
                     if (db.State == ConnectionState.Closed)
                         db.Open(); 
                     
-                    string query = "select * from orden where (mesero like '%@criteri%') or (mesa like '%@criteri%') or (cliente like '%@criteri%') or (comentario like '%@criteri%' ";
-                    var respuesta = db.Query<Orden>(query, new { criteri=criterio }).ToList();
+                    string query = "SELECT * FROM orden WHERE (mesero LIKE @criteri) OR (mesa LIKE @criteri) OR (cliente LIKE @criteri) OR (comentario LIKE @criteri);";
+                    var respuesta = db.Query<Orden>(query, new { criteri= "%" + criterio + "%" }).ToList();
                     return respuesta;
                 }
             }
@@ -86,39 +114,50 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                
+
                     //los siguientes 3 if son para saber si: -mesero, mesa y cliente tiene al menos uno de ello dato -total mayor a 0 -tenga producto
-                    if (orden.mesero!=null || orden.mesa!=null || orden.cliente!=null)
+                    if (!orden.mesero.Equals("") || !orden.mesa.Equals("") || !orden.cliente.Equals(""))
                     {
-                        if (orden.total > 0)
+                        if (orden.detalle.Count() > 0)
                         {
-                            if (orden.detalle.Count > 0)
+                            if (orden.total > 0)
                             {
-                                string query = "INSERT INTO orden (idOrden, mesero, mesa, cliente, fecha, comentario, total, activa) VALUES(@idOrde, @meser, @mesaa, @client, @fech, @comentari, @tota, @activ);";
-                                respuesta = db.Execute(query, new { idOrde=orden.idOrden, meser=orden.mesero, mesaa=orden.mesa, client=orden.cliente, fech=orden.fecha, comentari=orden.comentario, tota=orden.total, activ=orden.activa });
-                                for (int i=0; i < orden.detalle.Count; i++)
+                                String query;
+                                query = "SELECT COUNT(*) FROM orden WHERE idOrden=@idOrde;";
+                                var respuesta1 = db.Query<int>(query, new { idOrde = orden.idOrden }).SingleOrDefault();
+
+                                if (respuesta1 == 0)
                                 {
-                                    query = "INSERT INTO detalleorden (idOrden, idProducto, cantidad) VALUES(@idOrde, @idProduct, @cantida);";
-                                    respuesta = db.Execute(query, new { idOrde=orden.idOrden, idProduct= orden.detalle.ElementAt(i).producto.idProducto, cantida= orden.detalle.ElementAt(i).cantidad });
+                                    query = "INSERT INTO orden (idOrden, mesero, mesa, cliente, fecha, comentario, total, activa) VALUES(@idOrde, @meser, @mesaa, @client, @fech, @comentari, @tota, @activ);";
+                                    respuesta = db.Execute(query, new { idOrde = orden.idOrden, meser = orden.mesero, mesaa = orden.mesa, client = orden.cliente, fech = orden.fecha, comentari = orden.comentario, tota = orden.total, activ = orden.activa });
+                                    for (int i = 0; i < orden.detalle.Count; i++)
+                                    {
+                                        query = "INSERT INTO detalleorden (idOrden, idProducto, cantidad) VALUES(@idOrde, @idProduct, @cantida);";
+                                        respuesta = db.Execute(query, new { idOrde = orden.idOrden, idProduct = orden.detalle.ElementAt(i).producto.idProducto, cantida = orden.detalle.ElementAt(i).cantidad });
+                                    }
+                                }
+                                else
+                                {
+                                    MessageBox.Show("ManejadorOrdenes.Insertar()$No se puede realizar la operación Insertar, idOrden ingresado ya existe");
                                 }
                             }
                             else
                             {
-                                MessageBox.Show("ManejadorOrdenes.Insertar()$No tiene productos para insertar en la tabla detalleorden");
+                                MessageBox.Show("ManejadorOrdenes.Insertar()$Su total es menor o igual a 0, no se realizo la operación insertar");
                             }
                         }
                         else
                         {
-                            MessageBox.Show("ManejadorOrdenes.Insertar()$Su total es menor o igual a 0, no se realizo la operación insertar");
+                            MessageBox.Show("ManejadorOrdenes.Insertar()$No tiene productos para insertar en la tabla detalleorden");
                         }
                     }
                     else
                     {
                         MessageBox.Show("ManejadorOrdenes.Insertar()$No inserto datos de mesero, mesa y cliente, necesita al menos uno de estos campos lleno");
-                    }   
+                    }
+
+                    return respuesta;
                 }
-                
-                return respuesta;
             }
             catch
             {
@@ -145,46 +184,36 @@ namespace ResBarLib
 
                     if (respuesta1 == 1)
                     {
-                        //los siguientes 3 if son para saber si: -mesero, mesa y cliente tiene al menos uno de ello dato -total mayor a 0 -tenga producto
-                        if (!String.IsNullOrEmpty(orden.mesero) || !String.IsNullOrEmpty(orden.mesa) || !String.IsNullOrEmpty(orden.cliente))
+                        if (orden.detalle.Count() > 0)
                         {
                             if (orden.total > 0)
                             {
-                                if (orden.detalle.Count > 0)
+                                query = "UPDATE orden SET mesero=@meser, mesa=@mesaa, cliente=@client, fecha=@fech, comentario=@comentari, total=@tota, activa=@activ WHERE idOrden=@idOrde;";
+                                respuesta = db.Execute(query, new { idOrde = orden.idOrden, meser = orden.mesero, mesaa = orden.mesa, client = orden.cliente, fech = orden.fecha, comentari = orden.comentario, tota = orden.total, activ = orden.activa });
+
+                                query = "DELETE FROM detalleorden WHERE idOrden=@idOrde;";
+                                respuesta2 = db.Execute(query, new { idOrde = orden.idOrden });
+
+                                for (int i = 0; i < orden.detalle.Count; i++)
                                 {
-                                    query = "UPDATE orden SET mesero=@meser, mesa=@mesaa, cliente=@client, fecha=@fech, comentario=@comentari, total=@tota, activa=@activ WHERE idOrden=@idOrde;";
-                                    respuesta = db.Execute(query, new { idOrde = orden.idOrden, meser = orden.mesero, mesaa = orden.mesa, client = orden.cliente, fech = orden.fecha, comentari = orden.comentario, tota = orden.total, activ = orden.activa });
-
-                                    query = "DELETE FROM detalleorden WHERE idOrden=@idOrde;";
-                                    respuesta2 = db.Execute(query, new { idOrde = orden.idOrden });
-
-                                    for (int i = 0; i < orden.detalle.Count; i++)
-                                    {
-                                        query = "INSERT INTO detalleorden (idOrden, idProducto, cantidad) VALUES(@idOrde, @idProduct, @cantida);";
-                                        respuesta2 = db.Execute(query, new { idOrde = orden.idOrden, idProduct = orden.detalle.ElementAt(i).producto.idProducto, cantida = orden.detalle.ElementAt(i).cantidad });
-                                    }
-
+                                    query = "INSERT INTO detalleorden (idOrden, idProducto, cantidad) VALUES(@idOrde, @idProduct, @cantida);";
+                                    respuesta2 = db.Execute(query, new { idOrde = orden.idOrden, idProduct = orden.detalle.ElementAt(i).producto.idProducto, cantida = orden.detalle.ElementAt(i).cantidad });
                                 }
-                                else
-                                {
-                                    MessageBox.Show("ManejadorOrdenes.Actualizar()$No tiene productos para actualizar en la tabla detalleorden");
-                                }
+
                             }
                             else
                             {
-                                MessageBox.Show("ManejadorOrdenes.Actualizar()$Su total es menor o igual a 0, no se realizo la operación actualizar");
+                                MessageBox.Show("ManejadorOrdenes.Actualizar()$Su total es menor o igual a cero, no se realizo la operación actualizar");
                             }
                         }
                         else
                         {
-                            MessageBox.Show("ManejadorOrdenes.InsertarActualizar()$No inserto datos de mesero, mesa y cliente, necesita al menos uno de estos campos lleno");
+                            MessageBox.Show("ManejadorOrdenes.Actualizar()$No tiene productos en el objeto orden para actualizar en la tabla detalleorden");
                         }
-
-                        if (respuesta == 0) { MessageBox.Show("ManejadorOrdenes.Actualizar()$No Existe registro de id=" + orden.idOrden);}
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar");
+                        MessageBox.Show("ManejadorOrdenes.Actualizar()$No Existe registro de id=" + orden.idOrden);
                     }
                 }
                 return respuesta;
@@ -205,6 +234,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
+
                     string query = "DELETE FROM detalleorden WHERE idOrden=@idOrde;";
                     respuesta = db.Execute(query, new { idOrde=orden.idOrden });
                     query = "DELETE FROM orden WHERE idOrden=@idOrde;";
@@ -223,7 +253,6 @@ namespace ResBarLib
 
 
         //Va a la base de datos y obtiene el ultimo Id de orden y le suma 1
-
         public static int ObtenerID()
         {
             try
@@ -249,16 +278,25 @@ namespace ResBarLib
         //las ordenes devueltas tienen que tener el campo activa en FALSE, pues son ordenes que ya fueron cobradas
 
         public static List<Orden> ObtenerVentas(DateTime fecha)
-
         {
+            //sirve para configurar fecha en 2 variables,una en 00:00:00 y otra en 23:59:59, asi la consulta se hace de un mismo dia (consulta no se realiza si poner la hora)
+            TimeSpan TShora = new TimeSpan(0, 0, 0);
+            DateTime fechaMenor = fecha.Date + TShora;
+            TShora = new TimeSpan(23, 59, 59);
+            DateTime fechaMayor = fecha.Date + TShora;
+
+            //DateTime de c# muestra formato de hora en A.M. y P.M., transforma a formato de 24 Horas
+            String textMenor = fechaMenor.ToString("yyyy/MM/dd HH:mm:ss");
+            String textMayor = fechaMayor.ToString("yyyy/MM/dd HH:mm:ss");
+
             try
             {
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT * FROM orden WHERE fecha=@fech AND activa=false;";
-                    var respuesta = db.Query<Orden>(query, new { fech = fecha }).ToList();
+                    String query = "SELECT * FROM orden WHERE fecha BETWEEN @fechaMen AND @fechaMay AND activa=false;";
+                    var respuesta = db.Query<Orden>(query, new { fechaMen = textMenor, fechaMay = textMayor }).ToList();
                     return respuesta;
                 }
             }
@@ -270,17 +308,25 @@ namespace ResBarLib
 
         //filtrando por un rango de fechas. Importante en este método es que los objetos Orden NO tienen 
         //cargado el detalle de sus productos.
-
-        public static List<Orden> ObtenerVentas(DateTime fechaMayor, DateTime fechaMenor)
+        public static List<Orden> ObtenerVentas(DateTime fechaMenor, DateTime fechaMayor)
         {
+            //Se modifican las horas del DateTime para que en la consulta abarque todo el dia de ambas fechas
+            TimeSpan TShora = new TimeSpan(0, 0, 0);
+            fechaMenor = fechaMenor.Date + TShora;
+            TShora = new TimeSpan(23, 59, 59);
+            fechaMayor = fechaMayor.Date + TShora;
+
+            //DateTime de c# muestra formato de hora en A.M. y P.M., transforma a formato de 24 Horas
+            String textMenor = fechaMenor.ToString("yyyy/MM/dd HH:mm:ss");
+            String textMayor = fechaMayor.ToString("yyyy/MM/dd HH:mm:ss");
             try
             {
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    String query = "SELECT * FROM orden WHERE fecha >=@fechaMay AND fecha<=@fechaMen AND activa=false";
-                    var respuesta = db.Query<Orden>(query, new { fechaMay=fechaMayor, fechaMen=fechaMenor }).ToList();
+                    String query = "SELECT * FROM orden WHERE fecha BETWEEN @fechaMen AND @fechaMay AND activa=false;";
+                    var respuesta = db.Query<Orden>(query, new { fechaMen=textMenor, fechaMay=textMayor }).ToList();
                     return respuesta;
                 }
             }

@@ -20,22 +20,45 @@ namespace Testing
 
         private void btn_Consulta_Click(object sender, EventArgs e)
         {
-            /*
-            List<producto> prod = new List<producto>();
-            prod = ManejadorProductos.ObtenerxCategoria(1);
-            dataGridView1.DataSource = prod;
-            */
+            DateTime fechaMenor = new DateTime(2018, 06, 01);
+            DateTime fechaMayor = new DateTime(2018, 06, 10);
 
-            List<producto> prod = new List<producto>();
-            prod = ManejadorProductos.ObtenerxCategoria(1);
-
-            for (int i = 0; i < prod.Count(); i++)
+            List<Orden> lstOrden = new List<Orden>();
+            try
             {
-                MessageBox.Show(prod.ElementAt(i).nombre + "   " + prod.ElementAt(i).categoria.idCategoria + "   " + prod.ElementAt(i).categoria.nombre);
+                lstOrden = ManejadorOrdenes.ObtenerVentas(fechaMenor, fechaMayor);
+
+                for (int i = 0; i < lstOrden.Count(); i++)
+                {
+                    MessageBox.Show("" + lstOrden.ElementAt(i).idOrden + "   " + lstOrden.ElementAt(i).mesero + "   " + lstOrden.ElementAt(i).activa);
+                }
             }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.Message);
+            }
+
+
+            //List<Orden> orden = new List<Orden>();
+            //string text = "m";
+
+            //orden = ManejadorOrdenes.BuscarActivas(text);
+
+            //for (int i = 0; i < orden.Count(); i++)
+            //{
+            //    MessageBox.Show(" " + orden.ElementAt(i).idOrden + "  " + orden.ElementAt(i).mesero + "  " + orden.ElementAt(i).mesa + "  " + orden.ElementAt(i).cliente + "  " + "  " + orden.ElementAt(i).fecha + "  " + "  " + orden.ElementAt(i).comentario + "  " + "  " + orden.ElementAt(i).total + "  ");
+            //}
+
+            //List<producto> prod = new List<producto>();
+            //prod = ManejadorProductos.ObtenerxCategoria(1);
+
+            //for (int i = 0; i < prod.Count(); i++)
+            //{
+            //    MessageBox.Show(prod.ElementAt(i).nombre + "   " + prod.ElementAt(i).categoria.idCategoria + "   " + prod.ElementAt(i).categoria.nombre);
+            //}
         }
 
-        private void btnInsertar_Click(object sender, EventArgs e)
+            private void btnInsertar_Click(object sender, EventArgs e)
         {
 
             producto prod = new producto();
@@ -113,15 +136,13 @@ namespace Testing
             List<Categoria> categ = new List<Categoria>();
             List<producto> prod = new List<producto>();
             categ = ManejadorCategorias.Obtener(consinProd);
-            
-            dataGridView1.DataSource = categ;
             for (int i = 0; i < categ.Count(); i++)
             {
 
                 prod = categ.ElementAt(i).productos;
                 for (int ie = 0; ie < prod.Count(); ie++)
                 {
-                    MessageBox.Show("interfaz:" + categ.ElementAt(i).idCategoria + "-----" +prod.ElementAt(ie).idProducto );
+                    MessageBox.Show("interfaz:" + categ.ElementAt(i).idCategoria + "  -----  " +prod.ElementAt(ie).idProducto );
                 }
                    
             }
@@ -129,7 +150,7 @@ namespace Testing
         }
 
         private void btnOrd_Click(object sender, EventArgs e)
-        {
+        {   //orden a insertar
             Orden ord = new Orden();
             ord.idOrden = 1;
             ord.mesero = "mesero1";
@@ -140,6 +161,7 @@ namespace Testing
             ord.total = 10;
             ord.activa = true;
             
+            //productos que iran dentro de la orden
             producto prod = new producto();
             prod.idProducto = 4;
             prod.nombre = "prueba1";
@@ -148,27 +170,25 @@ namespace Testing
             prod.area = 'b';
             
             producto prod2 = new producto();
-            prod.idProducto = 5;
-            prod.nombre = "prueba2";
-            prod.precio = 2.0;
-            prod.categoria.idCategoria = 2;
-            prod.area = 'c';
+            prod2.idProducto = 5;
+            prod2.nombre = "prueba2";
+            prod2.precio = 2.0;
+            prod2.categoria.idCategoria = 2;
+            prod2.area = 'c';
             
-            DetalleOrden det= new DetalleOrden();
             
             ord.detalle = new List<DetalleOrden>();
-            
+            DetalleOrden det = new DetalleOrden();
+
+            DetalleOrden det2 = new DetalleOrden();
             det.producto = prod;
-            det.cantidad = 3;
+            det.cantidad = 4;
             ord.detalle.Add(det);
             
-            det.producto = prod;
-            det.cantidad = 5;
+            det2.producto = prod2;
+            det2.cantidad = 5;
+            ord.detalle.Add(det2);
 
-            ord.detalle.Add(det);
-            
-
-            MessageBox.Show("deteccion0   ingresar");
             try
             {
                 if (ManejadorOrdenes.Insertar(ord) > 0)

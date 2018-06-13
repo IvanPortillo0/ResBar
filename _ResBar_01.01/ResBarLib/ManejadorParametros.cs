@@ -23,7 +23,7 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "SELECT* FROM parametro; ";
+                    string query = "SELECT * FROM parametro; ";
                     var respuesta = db.Query<parametro>(query).ToList();
                     return respuesta;
                 }
@@ -45,10 +45,19 @@ namespace ResBarLib
                 {
                     if (db.State == ConnectionState.Closed)
                         db.Open();
-                    string query = "UPDATE parametro SET nombre=@nombr, valor=@valo WHERE idProducto=@idparametr;";
-                    respuesta = db.Execute(query, new { idparametr=param.idParametro, nombr=param.nombre, valo=param.valor });
-                    if (respuesta == 0) { MessageBox.Show("ManejadorParametros.Actualizar()$No Existe registro de id=" + param.idParametro); }
+
+                    if (!param.valor.Equals(""))
+                    {
+                        string query = "UPDATE parametro SET valor=@valo WHERE idParametro=@idparametr;";
+                        respuesta = db.Execute(query, new { idparametr = param.idParametro, valo = param.valor });
+                        if (respuesta == 0) { MessageBox.Show("ManejadorParametros.Actualizar()$No Existe registro de id=" + param.idParametro); }
+                    }
+                    else
+                    {
+                        MessageBox.Show("ManejadorParametros.Actualizar()$Campo valor es vacio");
+                    }
                 }
+               
                 return respuesta;
             }
             catch
