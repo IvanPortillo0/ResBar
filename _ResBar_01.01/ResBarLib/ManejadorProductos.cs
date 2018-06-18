@@ -33,7 +33,7 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorProductos.ObtenerxCategoria()$ No es posible conectarse a la DB");
+                throw new ErrorAplicationException("ManejadorProductos.ObtenerxCategoria()$ No es posible conectarse a la DB.");
             }
 
         }
@@ -56,7 +56,6 @@ namespace ResBarLib
                     }, new { nombrePro = "%" + nombreProd + "%" }, splitOn: "idCategoria").Distinct().ToList();
                     return respuesta;
                 }
-
             }
             catch
             {
@@ -67,8 +66,9 @@ namespace ResBarLib
         //Agrega el objeto "producto" a la base de datos
         public static int Insertar(producto prod)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorProductos.Insertar()$Problemas al conectar en la DB.";
             int respuesta = 0;
-           
             try
             {
                 using (IDbConnection db = new MySqlConnection(DbConnection.Cadena()))
@@ -94,12 +94,14 @@ namespace ResBarLib
                         }
                         else
                         {
-                            MessageBox.Show("ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar, idCategoria ingresado no existe o idProducto ingresado ya existe");
+                            numMsj = 2; //"ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar, idCategoria ingresado no existe o idProducto ingresado ya existe"
+                            throw new ErrorAplicationException();
                         }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Insertar()$Campo o campos invalidos");
+                        numMsj = 1; //"ManejadorProductos.Insertar()$Campo o campos invalidos"
+                        throw new ErrorAplicationException();
                     }
                 }
 
@@ -107,13 +109,23 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorProductos.Insertar()$Problemas al conectar en la DB");
+                switch(numMsj){
+                    case 1:
+                        msjExepcion = "ManejadorProductos.Insertar()$Campo o campos invalidos.";
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar, idCategoria ingresado no existe o idProducto ingresado ya existe.";
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
         //Si el objeto “producto” se desea modificar este actualizara en la base de datos cuando este ya este modificado, no se modificara el ID del producto solo sus otros campos
         public static int Actualizar(producto prod)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorProductos.Actualizar()$Problemas al conectar en la DB.";
             int respuesta = 0;
             try
             {
@@ -133,16 +145,22 @@ namespace ResBarLib
                         {
                             query = "UPDATE producto SET nombre=@nombr, precio=@preci, idCategoria=@idCategori, area=@are WHERE idProducto= @idProduct;";
                             respuesta = db.Execute(query, param: new { idProduct = prod.idProducto, nombr = prod.nombre, preci = prod.precio, idCategori = prod.categoria.idCategoria, are = prod.area });
-                            if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto); }
+                            if (respuesta == 0)
+                            {
+                                numMsj = 3; //"ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto
+                                throw new ErrorAplicationException();
+                            }
                         }
                         else
                         {
-                            MessageBox.Show("ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar, la categoria ingresada no existe");
+                            numMsj = 2;//"ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar, la categoria ingresada no existe"
+                            throw new ErrorAplicationException();
                         }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Actualizar()$Campo o campos invalidos");
+                        numMsj = 1; //"ManejadorProductos.Actualizar()$Campo o campos invalidos"
+                        throw new ErrorAplicationException();
                     }
                 }
 
@@ -150,13 +168,27 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorProductos.Actualizar()$Problemas al conectar en la DB");
+                switch (numMsj)
+                {
+                    case 1:
+                        msjExepcion = "ManejadorProductos.Actualizar()$Campo o campos invalidos.";
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorProductos.Actualizar()$No se puede realizar la operación de Actualizar, la categoria ingresada no existe.";
+                        break;
+                    case 3:
+                        msjExepcion = "ManejadorProductos.Actualizar()$No Existe registro de id=" + prod.idProducto;
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
         //Elimina en la base de datos el "producto" que recibe como parametro
         public static int Eliminar(producto prod)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorProductos.Eliminar()$Problemas al conectar en la DB.";
             int respuesta = 0;
             try
             {
@@ -176,24 +208,40 @@ namespace ResBarLib
                         query = "DELETE FROM producto WHERE idProducto=@idProduct;";
                         respuesta = db.Execute(query, new { idProduct = prod.idProducto });
 
-                        if (respuesta == 0) { MessageBox.Show("ManejadorProductos.Eliminar()$No Existe registro de id=" + prod.idProducto); }
+                        if (respuesta == 0)
+                        {
+                            numMsj = 2; //"ManejadorProductos.Eliminar()$No Existe registro de id=" + prod.idProducto
+                            throw new ErrorAplicationException();
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla detalleorden de la bd");
+                        numMsj = 1; //"ManejadorProductos.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla detalleorden de la BD"
+                        throw new ErrorAplicationException();
                     }
                     return respuesta;
                 }
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorProductos.Eliminar()$Problemas al conectar en la DB");
+                switch (numMsj)
+                {
+                    case 1:
+                        msjExepcion = "ManejadorProductos.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla detalleorden de la BD.";
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorProductos.Eliminar()$No Existe registro de id=" + prod.idProducto;
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
         //Realiza una petición a la base de datos y devuelve un objeto producto que cuyo IDProducto coincide con el valor del parámetro
         public static producto Obtener(int idProducto)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorProductos.Obtener()$Problemas al conectar en la DB.";
             producto respuesta = new producto();
             try
             {
@@ -213,14 +261,19 @@ namespace ResBarLib
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Obtener()$id no existe");
+                        numMsj = 1; //"ManejadorProductos.Obtener()$id no existe"
+                        throw new ErrorAplicationException();
                     }
                 }
                 return respuesta;
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorProductos.Obtener()$Problemas al conectar en la DB");
+                if (numMsj == 1)
+                {
+                    msjExepcion = "ManejadorProductos.Obtener()$id no existe.";
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
@@ -241,7 +294,7 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorProductos.ObtenerID()$Problemas al conectar en la DB");
+                throw new ErrorAplicationException("ManejadorProductos.ObtenerID()$Problemas al conectar en la DB.");
             }
         }
 

@@ -1153,37 +1153,6 @@ namespace PruebasCSharpResBar
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-
-            //DateTime fechaMenor = new DateTime(2018, 05, 04, 01, 01, 01);
-            //DateTime fechaMayor = new DateTime(2018, 05, 04, 02, 02, 02);
-            //string text = fechaMenor.ToString("dd/MM/yyyy HH:mm:ss");
-            //string text2 = fechaMayor.ToString("dd/MM/yyyy HH:mm:ss");
-            //MessageBox.Show(text + "   -    " + text2);
-
-            //TimeSpan TShora = new TimeSpan(0, 0, 0);
-            //fechaMenor = fechaMenor.Date + TShora;
-            //TShora = new TimeSpan(23, 59, 59);
-            //fechaMayor = fechaMayor.Date + TShora;
-
-            //text = fechaMenor.ToString("dd/MM/yyyy HH:mm:ss");
-            //text2 = fechaMayor.ToString("dd/MM/yyyy HH:mm:ss");
-
-            //MessageBox.Show("" + text + "       -        " + text2);
-            DateTime fecha = new DateTime(2018, 05, 04);
-
-            TimeSpan TShora = new TimeSpan(0, 0, 0);
-            DateTime fechaMenor = fecha.Date + TShora;
-            TShora = new TimeSpan(23, 59, 59);
-            DateTime fechaMayor = fecha.Date + TShora;
-
-            String textMenor = fechaMenor.ToString("dd/MM/yyyy HH:mm:ss");
-            String textMayor = fechaMayor.ToString("dd/MM/yyyy HH:mm:ss");
-
-            MessageBox.Show("'" + textMenor + "'       -        '" + textMayor+"'");
-        }
-
         //ObtenerVentas(dateTime) 26
         private void button93_Click(object sender, EventArgs e)
         {

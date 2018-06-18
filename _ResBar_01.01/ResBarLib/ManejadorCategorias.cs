@@ -61,13 +61,15 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorCategorias.Obtener()$ No es posible conectarse a la DB");
+                throw new ErrorAplicationException("ManejadorCategorias.Obtener()$ No es posible conectarse a la DB.");
             }
         }
 
         //Si se desea modificar el objeto “categoria” este actualizara en la base de datos cuando este ya este modoficado, no se modificara el IDCategoria
         public static int Actualizar(Categoria categoria)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorCategorias.Actualizar()$No es posible conectarse a la DB.";
             int respuesta = 0;
             try
             {
@@ -80,11 +82,16 @@ namespace ResBarLib
                     {
                         string query = "UPDATE categoria SET nombre=@nombr WHERE idCategoria=@idCategori;";
                         respuesta = db.Execute(query, new { idCategori = categoria.idCategoria, nombr = categoria.nombre });
-                        if (respuesta == 0) { MessageBox.Show("ManejadorCategorias.Actualizar()$No Existe registro de id=" + categoria.idCategoria); }
+                        if (respuesta == 0)
+                        {
+                            numMsj = 2; //"ManejadorCategorias.Actualizar()$No Existe registro de id=" + categoria.idCategoria
+                            throw new ErrorAplicationException();
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorCategorias.Actualizar()$Nombre de categoria es vacio");
+                        numMsj = 1; //"ManejadorCategorias.Actualizar()$Nombre de categoria es vacio."
+                        throw new ErrorAplicationException();
                     }
                 }
 
@@ -92,13 +99,24 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorCategorias.Actualizar()$No es posible conectarse a la DB.");
+                switch (numMsj)
+                {
+                    case 1:
+                        msjExepcion = "ManejadorCategorias.Actualizar()$Nombre de categoria es vacio.";
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorCategorias.Actualizar()$No Existe registro de id=" + categoria.idCategoria;
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
         //Agrega el objeto "categoría" a la base de datos
         public static int Insertar(Categoria categoria)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorCategorias.Insertar()$Problemas al conectar en la DB.";
             int respuesta = 0;
             try
             {
@@ -120,12 +138,14 @@ namespace ResBarLib
                         }
                         else
                         {
-                            MessageBox.Show("ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar, idCategoria ingresado ya existe");
+                            numMsj = 2; //"ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar, idCategoria ingresado ya existe."
+                            throw new ErrorAplicationException();
                         }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorCategorias.Insertar()$Campo o Campos invalidos");
+                        numMsj = 1; //"ManejadorCategorias.Insertar()$Campo o Campos invalidos."
+                        throw new ErrorAplicationException();
                     }
                 }
 
@@ -133,13 +153,24 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorCategorias.Insertar()$Problemas al conectar en la DB");
+                switch (numMsj)
+                {
+                    case 1:
+                        msjExepcion = "ManejadorCategorias.Insertar()$Campo o Campos invalidos.";
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorProductos.Insertar()$No se puede realizar la operación de Insertar, idCategoria ingresado ya existe.";
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
         
         //Elimina en la base de datos la categoria que recibe como parametro
         public static int Eliminar(Categoria categoria)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorCategorias.Eliminar()$Problemas con la conexion a la DB.";
             int respuesta = 0;
             try
             {
@@ -160,18 +191,32 @@ namespace ResBarLib
                         query = "DELETE FROM categoria WHERE idCategoria=@idCategori;";
                         respuesta = db.Execute(query, new { idCategori=categoria.idCategoria });
 
-                        if (respuesta == 0) { MessageBox.Show("ManejadorCategorias.Eliminar()$No Existe registro de id=" + categoria.idCategoria); }
+                        if (respuesta == 0)
+                        {
+                            numMsj = 2; //"ManejadorCategorias.Eliminar()$No Existe registro de id=" + categoria.idCategoria
+                            throw new ErrorAplicationException();
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorCategorias.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la bd");
+                        numMsj = 1; //"ManejadorCategorias.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la BD."
+                        throw new ErrorAplicationException();
                     }
                     return respuesta;
                 }
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorCategorias.Eliminar()$Problemas con la conexion a la DB");
+                switch (numMsj)
+                {
+                    case 1:
+                        msjExepcion = "ManejadorCategorias.Eliminar()$No se puede eliminar debido a que tiene " + respuesta + " registros relacionados en la tabla producto de la BD.";
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorCategorias.Eliminar()$No Existe registro de id=" + categoria.idCategoria;
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 

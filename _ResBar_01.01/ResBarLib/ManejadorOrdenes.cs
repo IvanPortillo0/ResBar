@@ -29,14 +29,15 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerActivas()$ No es posible conectarse a la DB");
+                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerActivas()$ No es posible conectarse a la DB.");
             }
         }
 
         //Recibe un entero que indica el ID de la orden y luego devuelve el objeto orden completo que corresponde
         public static Orden Obtener(int idOrden)
         {
-
+            int numMsj = 0;
+            String msjExepcion = "ManejadorOrdenes.Obtener()$ No es posible conectarse a la DB.";
             Orden objOrden = new Orden();
             try
             {
@@ -69,7 +70,8 @@ namespace ResBarLib
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorProductos.Obtener()$id no existe");
+                        numMsj = 1; //"ManejadorProductos.Obtener()$id no existe"
+                        throw new ErrorAplicationException();
                     }
                 }
 
@@ -77,7 +79,11 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.Obtener()$ No es posible conectarse a la DB");
+                if (numMsj == 1)
+                {
+                    msjExepcion = "ManejadorProductos.Obtener()$id no existe.";
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
@@ -98,7 +104,7 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.BuscarActivas()$ No es posible conectarse a la DB");
+                throw new ErrorAplicationException("ManejadorOrdenes.BuscarActivas()$ No es posible conectarse a la DB.");
             }
         }
 
@@ -107,6 +113,8 @@ namespace ResBarLib
         //permite insertar ordenes con un total de cero o negativo, o que NO posean ningún producto en su detalle
         public static int Insertar(Orden orden)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorOrdenes.Insertar()$ No es posible conectarse a la DB.";
             int respuesta = 0;
             try
             {
@@ -138,22 +146,26 @@ namespace ResBarLib
                                 }
                                 else
                                 {
-                                    MessageBox.Show("ManejadorOrdenes.Insertar()$No se puede realizar la operación Insertar, idOrden ingresado ya existe");
+                                    numMsj = 4; //"ManejadorOrdenes.Insertar()$No se puede realizar la operación Insertar, idOrden ingresado ya existe"
+                                    throw new ErrorAplicationException();
                                 }
                             }
                             else
                             {
-                                MessageBox.Show("ManejadorOrdenes.Insertar()$Su total es menor o igual a 0, no se realizo la operación insertar");
+                                numMsj = 3; //"ManejadorOrdenes.Insertar()$Su total es menor o igual a 0, no se realizo la operación insertar"
+                                throw new ErrorAplicationException();
                             }
                         }
                         else
                         {
-                            MessageBox.Show("ManejadorOrdenes.Insertar()$No tiene productos para insertar en la tabla detalleorden");
+                            numMsj = 2; //"ManejadorOrdenes.Insertar()$No tiene productos para insertar en la tabla detalleorden"
+                            throw new ErrorAplicationException();
                         }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorOrdenes.Insertar()$No inserto datos de mesero, mesa y cliente, necesita al menos uno de estos campos lleno");
+                        numMsj = 1; //"ManejadorOrdenes.Insertar()$No inserto datos de mesero, mesa y cliente, necesita al menos uno de estos campos lleno"
+                        throw new ErrorAplicationException();
                     }
 
                     return respuesta;
@@ -161,7 +173,22 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.Insertar()$ No es posible conectarse a la DB");
+                switch (numMsj)
+                {
+                    case 1:
+                        msjExepcion = "ManejadorOrdenes.Insertar()$No inserto datos de mesero, mesa y cliente, necesita al menos uno de estos campos lleno.";
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorOrdenes.Insertar()$No tiene productos para insertar en la tabla detalleorden.";
+                        break;
+                    case 3:
+                        msjExepcion = "ManejadorOrdenes.Insertar()$Su total es menor o igual a 0, no se realizo la operación insertar.";
+                        break;
+                    case 4:
+                        msjExepcion = "ManejadorOrdenes.Insertar()$No se puede realizar la operación Insertar, idOrden ingresado ya existe.";
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
@@ -170,6 +197,8 @@ namespace ResBarLib
         //la tabla Detalle Orden, lo que se hace es que se eliminan las tuplas de dicha orden y luego se insertan de nuevo
         public static int Actualizar(Orden orden)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorOrdenes.Actualizar()$ No es posible conectarse a la DB.";
             int respuesta = 0, respuesta1 = 0, respuesta2 = 0;
             try
             {
@@ -203,30 +232,47 @@ namespace ResBarLib
                             }
                             else
                             {
-                                MessageBox.Show("ManejadorOrdenes.Actualizar()$Su total es menor o igual a cero, no se realizo la operación actualizar");
+                                numMsj = 3; //"ManejadorOrdenes.Actualizar()$Su total es menor o igual a cero, no se realizo la operación actualizar"
+                                throw new ErrorAplicationException();
                             }
                         }
                         else
                         {
-                            MessageBox.Show("ManejadorOrdenes.Actualizar()$No tiene productos en el objeto orden para actualizar en la tabla detalleorden");
+                            numMsj = 2; //"ManejadorOrdenes.Actualizar()$No tiene productos en el objeto orden para actualizar en la tabla detalleorden"
+                            throw new ErrorAplicationException();
                         }
                     }
                     else
                     {
-                        MessageBox.Show("ManejadorOrdenes.Actualizar()$No Existe registro de id=" + orden.idOrden);
+                        numMsj = 1; //"ManejadorOrdenes.Actualizar()$No Existe registro de id=" + orden.idOrden
+                        throw new ErrorAplicationException();
                     }
                 }
                 return respuesta;
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.Actualizar()$ No es posible conectarse a la DB");
+                switch (numMsj)
+                {
+                    case 1:
+                        msjExepcion = "ManejadorOrdenes.Actualizar()$No Existe registro de id=" + orden.idOrden;
+                        break;
+                    case 2:
+                        msjExepcion = "ManejadorOrdenes.Actualizar()$No tiene productos en el objeto orden para actualizar en la tabla detalleorden.";
+                        break;
+                    case 3:
+                        msjExepcion = "ManejadorOrdenes.Actualizar()$Su total es menor o igual a cero, no se realizo la operación actualizar.";
+                        break;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
 
         //Elimina dicha orden de la base de datos, eliminando sus detalles también
         public static int Eliminar(Orden orden)
         {
+            int numMsj = 0;
+            String msjExepcion = "ManejadorOrdenes.Eliminar()$Problemas al conectar en la DB.";
             int respuesta = 0;
             try
             {
@@ -239,14 +285,22 @@ namespace ResBarLib
                     respuesta = db.Execute(query, new { idOrde=orden.idOrden });
                     query = "DELETE FROM orden WHERE idOrden=@idOrde;";
                     respuesta = db.Execute(query, new { idOrde = orden.idOrden });
-                    if (respuesta == 0) { MessageBox.Show("ManejadorOrdenes.Eliminar()$No Existe registro de id=" + orden.idOrden); }
+                    if (respuesta == 0)
+                    {
+                        numMsj = 1; //"ManejadorOrdenes.Eliminar()$No Existe registro de id=" + orden.idOrden
+                        throw new ErrorAplicationException();
+                    }
                 }
 
                 return respuesta;
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.Eliminar()$Problemas al conectar en la DB");
+                if (numMsj == 1)
+                {
+                    msjExepcion = "ManejadorOrdenes.Eliminar()$No Existe registro de id=" + orden.idOrden;
+                }
+                throw new ErrorAplicationException(msjExepcion);
             }
         }
         
@@ -269,7 +323,7 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerID()$Problemas al conectar en la DB");
+                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerID()$Problemas al conectar en la DB.");
             }
         }
 
@@ -302,7 +356,7 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerVentas()$ No es posible conectarse a la DB");
+                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerVentas()$ No es posible conectarse a la DB.");
             }
         }
 
@@ -332,7 +386,7 @@ namespace ResBarLib
             }
             catch
             {
-                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerVentas()$ No es posible conectarse a la DB");
+                throw new ErrorAplicationException("ManejadorOrdenes.ObtenerVentas()$ No es posible conectarse a la DB.");
             }
         }
     }

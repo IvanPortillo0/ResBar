@@ -62,10 +62,10 @@ namespace Testing
         {
 
             producto prod = new producto();
-            prod.idProducto = 4;
-            prod.nombre = "prueba1";
+            prod.idProducto = 6;
+            prod.nombre = "prueba6";
             prod.precio = 1.0;
-            prod.categoria.idCategoria = 1;
+            prod.categoria.idCategoria = 5;
             prod.area = 'b';
 
             try
@@ -85,10 +85,10 @@ namespace Testing
         private void btnActualizar_Click(object sender, EventArgs e)
         {
             producto prod = new producto();
-            prod.idProducto = 4;
-            prod.nombre = "prueba1";
+            prod.idProducto = 6;
+            prod.nombre = "prueba6_Actualizado";
             prod.precio = 1.0;
-            prod.categoria.idCategoria = 1;
+            prod.categoria.idCategoria = 5;
             prod.area = 'b';
 
             try
@@ -108,10 +108,10 @@ namespace Testing
         private void btnEliminar_Click(object sender, EventArgs e)
         {
             producto prod = new producto();
-            prod.idProducto = 4;
-            prod.nombre = "prueba1";
+            prod.idProducto = 6;
+            prod.nombre = "prueba6";
             prod.precio = 1.0;
-            prod.categoria.idCategoria = 1;
+            prod.categoria.idCategoria = 5;
             prod.area = 'b';
 
             try
